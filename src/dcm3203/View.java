@@ -18,6 +18,7 @@ public class View extends JFrame{
 
     private void initDisplay() {
         setTitle("Application name");
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); //exit the program when the window is closed.
         setSize(750, 600);
         setLocation(100, 100);
 
