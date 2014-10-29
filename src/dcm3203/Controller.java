@@ -10,7 +10,7 @@ public class Controller {
      */
     public static void main(String[] args) {
         System.out.println("Hello!");
-        View myView = new View(new Model());
+        View myView = new View(new Model(), new Controller());
         //TODO add listeners
         System.out.println("Goodbye");
     }

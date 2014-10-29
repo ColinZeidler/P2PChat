@@ -8,28 +8,62 @@ import java.awt.*;
  */
 public class View extends JFrame{
     private Model myModel;
+    private Controller myController;
 
-    public View(Model model) {
+    public View(Model model, Controller controller) {
+        myModel = model;
+        myController = controller;
+        initDisplay();
+    }
+
+    private void initDisplay() {
         setTitle("Application name");
-        setSize(500, 600);
+        setSize(750, 600);
         setLocation(100, 100);
 
         //rows, columns, vertical gap, horizontal gap
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
+        //TODO add padding between all elements
 
-        //TODO add chat log
+        // add chat log
+        JTextArea chatLog = new JTextArea(30, 40);
+        chatLog.setEditable(false);
+        JScrollPane chatScrollPane = new JScrollPane(chatLog);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 0.9;
+        this.add(chatScrollPane, c);
 
 
-        //TODO add user list
+        // add user list
+        JList<User> userJList = new JList<User>();
+        JScrollPane userScrollPane = new JScrollPane(userJList);
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 1;
+        c.gridy = 0;
+        c.weightx = 0;
+        this.add(userScrollPane, c);
 
 
-        //TODO add message bar
+        // add message bar
+        JTextField messageBar = new JTextField();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 1;
+        this.add(messageBar, c);
 
 
-        //TODO add send button
+        // add send button
+        JButton sendButton = new JButton("Send");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 1;
+        this.add(sendButton, c);
 
-
+        //TODO fix shit when resizing
         setVisible(true);
+
     }
 }
