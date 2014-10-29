@@ -14,7 +14,22 @@ public class View extends JFrame{
         setSize(500, 600);
         setLocation(100, 100);
 
-        setLayout(new GridLayout(2, 3));
+        //rows, columns, vertical gap, horizontal gap
+        setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+
+        //TODO add chat log
+
+
+        //TODO add user list
+
+
+        //TODO add message bar
+
+
+        //TODO add send button
+
+
         setVisible(true);
     }
 }
