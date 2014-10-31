@@ -20,6 +20,7 @@ public class ConnectDialog extends JDialog{
     /////
     //   All the components
     //
+    private JButton             searchLocalIP;
     private JButton             joinListedIP;
     private JButton             joinEnteredIP;
     private JButton             cancelButton;
