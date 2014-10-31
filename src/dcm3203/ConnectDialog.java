@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * Created by Michael on 30/10/2014.
@@ -12,7 +14,6 @@ import java.awt.event.ActionListener;
  * NOTES:
  *  - IP assumed to be in strings
  *
- * TODO just a shell right now, need to add
  */
 public class ConnectDialog extends JDialog{
 
@@ -22,6 +23,7 @@ public class ConnectDialog extends JDialog{
     private ActionListener      cancelAction;       //  The handler for quitting the app
     private ActionListener      listIPAction;       //  The handler for an IP found by discovery
     private ActionListener      enterIPAction;      //  The handler for an IP entered by user
+    private MouseAdapter        listIPAdapter;      //  The handle for clicking on the list
 
     static final String         NO_PEERS = "No peers found";        //  Empty list const string
 
@@ -59,6 +61,13 @@ public class ConnectDialog extends JDialog{
             }
         };
 
+        listIPAdapter = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                listClicked();
+            }
+        };
+
     }
 
     /////
@@ -69,13 +78,14 @@ public class ConnectDialog extends JDialog{
         setResizable(false);
         setLayout(null);
 
-        listIP = new JList();
+        listIP = new JList<String>();
         //listIP.addMouseListener(listListener);
         JScrollPane scrollPane = new JScrollPane(listIP,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setLocation(5,5);
-        scrollPane.setSize(330,280);
+        scrollPane.setSize(330, 280);
+        listIP.addMouseListener(listIPAdapter);
         this.add(scrollPane);
 
         enterIP = new JTextField("[Enter an IP Address]");
@@ -111,6 +121,15 @@ public class ConnectDialog extends JDialog{
 
         // TODO get list data, empty means no IPs found
 
+        // Test data
+/*
+        listData = new String[5];
+        listData[0] = "128.128.128.128";
+        listData[1] = "128.128.1542.128";
+        listData[2] = "128.abc.128.128";
+        listData[3] = "NULL";
+        listData[4] = "128.128";
+*/
         if (listData.length == 0) {
             listData = new String[1];
             listData[0] = NO_PEERS;
@@ -120,8 +139,12 @@ public class ConnectDialog extends JDialog{
     }
 
     private void cancelButtonPressed() {
-        if (getOwner() != null) ((View) getOwner()).dispose();
+        if (getOwner() != null) getOwner().dispose();
         dispose();
+    }
+
+    private void listClicked() {
+        listIP.setSelectedIndex(listIP.getSelectedIndex());
     }
 
     private void enterIPCheck(String ip) {
@@ -138,12 +161,13 @@ public class ConnectDialog extends JDialog{
         } else if (ip.equals(NO_PEERS)) {
             JOptionPane.showMessageDialog(this, "No IPs in the list!", "Warning!", JOptionPane.WARNING_MESSAGE);
         } else {
-            selectIP(ip);
+            enterIPCheck(ip);
         }
     }
 
     private void selectIP(String ip) {
-        //if (getOwner() != null) ((View)getOwner()).ipFunction(ip);
+        // TODO send out to connect to IP
+        //if (getOwner() != null) ((View)getOwner()).ipFunction(ip); // not actual function name
         System.out.println(ip);
     }
 
@@ -161,10 +185,10 @@ public class ConnectDialog extends JDialog{
             for (int i = 0; i < 4; i++) {
                 int temp = Integer.parseInt(bytes[i]);
                 if (temp < 0 || temp > 255) return (false);
-                System.out.println(i);
             }
-        } catch (Exception e) {
-            return (false);     // TODO Not a good way to handle this, need to fix
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid IP : " + e.getMessage()); // just if issues pop up
+            return (false);
         }
 
         return(true);
