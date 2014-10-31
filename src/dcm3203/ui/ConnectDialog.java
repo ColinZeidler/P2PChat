@@ -31,6 +31,7 @@ public class ConnectDialog extends JDialog{
     /////
     //   The handlers
     //
+    private ActionListener      searchAction;       //  The handler to search for peers
     private ActionListener      cancelAction;       //  The handler for quitting the app
     private ActionListener      listIPAction;       //  The handler for an IP found by discovery
     private ActionListener      enterIPAction;      //  The handler for an IP entered by user
@@ -64,6 +65,13 @@ public class ConnectDialog extends JDialog{
     //   This function deals with setting up the handlers of the dialog
     //
     private void initHandlers() {
+
+        searchAction = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO call to get list, do search, whatever
+            }
+        };
 
         cancelAction = new ActionListener() {
             @Override
@@ -135,6 +143,9 @@ public class ConnectDialog extends JDialog{
         /////
         //   Sets up the buttons
         //
+        searchLocalIP = new JButton("Search For Peers");
+        searchLocalIP.addActionListener(searchAction);
+        add(searchLocalIP);
 
         joinListedIP = new JButton("Join Listed IP");
         joinListedIP.addActionListener(listIPAction);
@@ -162,19 +173,21 @@ public class ConnectDialog extends JDialog{
                 CDIALOG_BUTTON_HEIGHT);
 
         joinListedIP.setLocation(CDIALOG_WIDTH - CDIALOG_BUTTON_WIDTH - CDIALOG_PAD*2,
-                CDIALOG_PAD + CDIALOG_BUTTON_HEIGHT);
+                (CDIALOG_PAD + CDIALOG_BUTTON_HEIGHT)*2);
         joinListedIP.setSize(CDIALOG_BUTTON_WIDTH,
                 CDIALOG_BUTTON_HEIGHT);
 
+        searchLocalIP.setLocation(joinListedIP.getLocation().x,
+                CDIALOG_PAD + CDIALOG_BUTTON_HEIGHT);
+        searchLocalIP.setSize(joinListedIP.getSize());
+
         joinEnteredIP.setLocation(joinListedIP.getLocation().x,
                 CDIALOG_HEIGHT - (CDIALOG_PAD + CDIALOG_BUTTON_HEIGHT)*3);
-        joinEnteredIP.setSize(CDIALOG_BUTTON_WIDTH,
-                CDIALOG_BUTTON_HEIGHT);
+        joinEnteredIP.setSize(joinListedIP.getSize());
 
         cancelButton.setLocation(joinListedIP.getLocation().x,
                 CDIALOG_HEIGHT - (CDIALOG_PAD + CDIALOG_BUTTON_HEIGHT)*2);
-        cancelButton.setSize(CDIALOG_BUTTON_WIDTH,
-                CDIALOG_BUTTON_HEIGHT);
+        cancelButton.setSize(joinListedIP.getSize());
     }
 
     private void initList() {
