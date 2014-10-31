@@ -21,6 +21,8 @@ public class Controller {
     public Controller() {
         myModel = new Model();
         myView = new View(myModel, this);
+        ConnectDialog connect = new ConnectDialog(myView, "Connect", true);
+        connect.setVisible(true);
     }
 
     public void run() {
