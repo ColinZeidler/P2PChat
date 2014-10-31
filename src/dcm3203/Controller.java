@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
  */
 public class Controller {
     private View myView;
+    private Model myModel;
     /**
      * Entry method
      * @param args command line args, ignored
@@ -18,11 +19,20 @@ public class Controller {
     }
 
     public Controller() {
-        myView = new View(new Model(), this);
+        myModel = new Model();
+        myView = new View(myModel, this);
     }
 
     public void run() {
+        for (int i = 0; i < 250; i++) {
+            myModel.addMessage("new message: " + i);
+            myView.update();
+        }
 
+        for (int i = 0; i < 40; i ++) {
+            myModel.addUser(new User("User " + i, null));
+            myView.update();
+        }
     }
 
     //TODO implement action listener
@@ -30,7 +40,7 @@ public class Controller {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Send Button Test");
+                myModel.addMessage("Send message!!!");
                 myView.update();
             }
         };
