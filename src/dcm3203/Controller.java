@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 public class Controller {
     private View myView;
     private Model myModel;
+    private ConnectDialog myConnect;
     /**
      * Entry method
      * @param args command line args, ignored
@@ -21,8 +22,8 @@ public class Controller {
     public Controller() {
         myModel = new Model();
         myView = new View(myModel, this);
-        ConnectDialog connect = new ConnectDialog(myView, "Connect", true);
-        connect.setVisible(true);
+        myConnect = new ConnectDialog(myView, "Connect", true);
+        myConnect.setVisible(true);
     }
 
     public void run() {
