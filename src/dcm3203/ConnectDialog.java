@@ -23,11 +23,14 @@ public class ConnectDialog extends JDialog{
     private ActionListener      listIPAction;       //  The handler for an IP found by discovery
     private ActionListener      enterIPAction;      //  The handler for an IP entered by user
 
+    static final String         NO_PEERS = "No peers found";        //  Empty list const string
+
     public ConnectDialog(Frame owner, String title, boolean modal) {
         super(owner, title, modal);
 
         initHandlers();
         initVisual();
+        initList();
     }
 
     /////
@@ -96,11 +99,24 @@ public class ConnectDialog extends JDialog{
         joinEnteredIP.addActionListener(enterIPAction);
         add(joinEnteredIP);
 
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton("Exit");
         cancelButton.setLocation(340,330);
         cancelButton.setSize(150, 25);
         cancelButton.addActionListener(cancelAction);
         add(cancelButton);
+    }
+
+    private void initList() {
+        String[] listData = new String[0];
+
+        // TODO get list data, empty means no IPs found
+
+        if (listData.length == 0) {
+            listData = new String[1];
+            listData[0] = NO_PEERS;
+        }
+
+        listIP.setListData(listData);
     }
 
     private void cancelButtonPressed() {
@@ -119,6 +135,8 @@ public class ConnectDialog extends JDialog{
     private void listIPCheck(String ip) {
         if(ip == null) {
             JOptionPane.showMessageDialog(this, "No IP selected from list!", "Warning!", JOptionPane.WARNING_MESSAGE);
+        } else if (ip.equals(NO_PEERS)) {
+            JOptionPane.showMessageDialog(this, "No IPs in the list!", "Warning!", JOptionPane.WARNING_MESSAGE);
         } else {
             selectIP(ip);
         }
@@ -152,10 +170,10 @@ public class ConnectDialog extends JDialog{
         return(true);
     }
 
-    /* //  Testing stuff
+/* // Testing stuff
     static public void main(String[] args){
         ConnectDialog dlog = new ConnectDialog(new View(new Model(), new Controller()),"Connect",true);
         dlog.setVisible(true);
     }
-    */
+*/
 }
