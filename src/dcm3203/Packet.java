@@ -1,5 +1,6 @@
 package dcm3203;
 
+import java.nio.ByteBuffer;
 /**
  * Created by Daniel on 30/10/2014.
  */
@@ -10,17 +11,7 @@ package dcm3203;
  than it is to create packets individually by passing raw data.
  Something like:
  Packet packet = new Packet(packet_id);
- packet.putData(...);
-
  client.writePacket(packet);
- is easier than like:
- byte[] data = new byte[some_size];
- data[0] = packet_id;
- data[1] = some_data0;
- data[2] = some_data1;
- ...
-
- client.writePacket(data)
 
  Same way with reading Packets as well:
  Packet packet = client.readPacket();
@@ -33,9 +24,25 @@ package dcm3203;
  //Invalid packet
  break;
  }
+
+ client.readPacket():
+ Packet readPacket() {
+ //read a byte from stream [id]
+ //read a short from stream [packet size]
+ //read data into a byte array
+ return new Packet(id, data);
+ }
  */
 public class Packet {
     private int ID;
+    private ByteBuffer data;
+
+    public Packet(int id, byte[] data){
+        ID = id;
+        this.data = ByteBuffer.wrap(data);
+    }
+
 
     public int getID(){return ID;}
+    public ByteBuffer getData(){return data.asReadOnlyBuffer();} //contents of the buffer cannot be changed
 }
