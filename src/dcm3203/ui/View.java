@@ -1,9 +1,12 @@
-package dcm3203;
+package dcm3203.ui;
+
+import dcm3203.Controller;
+import dcm3203.data.Model;
+import dcm3203.data.User;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
 
 /**
  * Created by Colin on 2014-10-28.
@@ -33,7 +36,7 @@ public class View extends JFrame{
         setSize(VIEW_MIN_WIDTH, VIEW_MIN_HEIGHT);
         setLocation(100, 100);
 
-        setMinimumSize(new Dimension(VIEW_MIN_WIDTH,VIEW_MIN_HEIGHT)); //  Helps with the sizing issue (maybe not the solution)
+        setMinimumSize(new Dimension(VIEW_MIN_WIDTH, VIEW_MIN_HEIGHT)); //  Helps with the sizing issue (maybe not the solution)
 
         //rows, columns, vertical gap, horizontal gap
         setLayout(new GridBagLayout());

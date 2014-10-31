@@ -1,7 +1,6 @@
-package dcm3203;
+package dcm3203.data;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Vector;
 
 /**

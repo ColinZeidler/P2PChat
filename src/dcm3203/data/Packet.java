@@ -1,4 +1,4 @@
-package dcm3203;
+package dcm3203.data;
 
 import java.nio.ByteBuffer;
 /**

@@ -1,4 +1,4 @@
-package dcm3203;
+package dcm3203.ui;
 
 import javax.swing.*;
 import java.awt.*;

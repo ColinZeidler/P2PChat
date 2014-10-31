@@ -1,7 +1,11 @@
 package dcm3203;
 
+import dcm3203.data.Model;
+import dcm3203.data.User;
 import dcm3203.network.ConnectionServer;
 import dcm3203.network.UDPDiscoveryHandle;
+import dcm3203.ui.ConnectDialog;
+import dcm3203.ui.View;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
