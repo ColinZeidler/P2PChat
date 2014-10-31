@@ -5,7 +5,7 @@ package dcm3203.network;
  *
  * Handles incoming connections, from users that wish to join the room
  */
-public class ConnectionServer {
+public class ConnectionServer implements Runnable{
     private int port;
 
     public ConnectionServer(int port) {
@@ -20,6 +20,7 @@ public class ConnectionServer {
      * adds the new user to the user list
      */
     public void run() {
-
+        System.out.println("temp out, nothing actually done");
+        System.out.println("Port is: " + this.port);
     }
 }

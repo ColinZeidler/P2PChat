@@ -1,6 +1,7 @@
 package dcm3203;
 
-import com.sun.xml.internal.stream.util.ThreadLocalBufferAllocator;
+import dcm3203.network.ConnectionServer;
+import dcm3203.network.UDPDiscoveryHandle;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +13,7 @@ public class Controller {
     private View myView;
     private Model myModel;
     private ConnectDialog myConnect;
+    private int connectionPort = 60023, udpPort = 60022;
     /**
      * Entry method
      * @param args command line args, ignored
@@ -31,11 +33,11 @@ public class Controller {
     public void run() {
 
         //TODO spin off new Thread for incoming connection handling (just a shell right now)
-        Thread inConnect = new Thread(new IncomingConnection());
+        Thread inConnect = new Thread(new ConnectionServer(connectionPort));
         inConnect.start();
 
         //TODO spin off new Thread for UDP discovery handling (just a shell)
-        Thread discoverHandle = new Thread(new UDPDiscoveryHandle());
+        Thread discoverHandle = new Thread(new UDPDiscoveryHandle(udpPort));
         discoverHandle.start();
 
         for (int i = 0; i < 250; i++) {
