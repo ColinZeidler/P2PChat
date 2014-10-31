@@ -1,5 +1,7 @@
 package dcm3203;
 
+import com.sun.xml.internal.stream.util.ThreadLocalBufferAllocator;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -27,8 +29,15 @@ public class Controller {
     }
 
     public void run() {
-        //TODO spin off new Thread for incoming connection handling
-        //TODO spin off new Thread for UDP discovery handling
+
+        //TODO spin off new Thread for incoming connection handling (just a shell right now)
+        Thread inConnect = new Thread(new IncomingConnection());
+        inConnect.start();
+
+        //TODO spin off new Thread for UDP discovery handling (just a shell)
+        Thread discoverHandle = new Thread(new UDPDiscoveryHandle());
+        discoverHandle.start();
+
         for (int i = 0; i < 250; i++) {
             myModel.addMessage("new message: " + i);
             myView.update();
