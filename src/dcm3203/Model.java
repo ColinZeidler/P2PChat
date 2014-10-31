@@ -11,6 +11,11 @@ public class Model {
     private int maxMessages = 750;
     private ArrayList<User> userList;
 
+    public Model() {
+        messageHistory = new ArrayDeque<String>();
+        userList = new ArrayList<User>();
+    }
+
     public ArrayDeque<String> getMessageHistory() {
         return messageHistory;
     }

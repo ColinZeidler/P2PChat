@@ -24,6 +24,8 @@ public class User {
         return name;
     }
 
+    //This might be completely wrong and stupid
+    //Not tested
     public void sendMessage(String message) throws IOException {
         PrintWriter send = new PrintWriter(connection.getOutputStream(), true);
         send.print(message);
