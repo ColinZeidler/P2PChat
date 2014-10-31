@@ -7,15 +7,22 @@ import java.awt.event.ActionListener;
  * Created by Colin on 2014-10-28.
  */
 public class Controller {
+    private View myView;
     /**
      * Entry method
-     * @param args
+     * @param args command line args, ignored
      */
     public static void main(String[] args) {
-        System.out.println("Hello!");
-        View myView = new View(new Model(), new Controller());
-        //TODO add listeners
-        System.out.println("Goodbye");
+        Controller controller = new Controller();
+        controller.run();
+    }
+
+    public Controller() {
+        myView = new View(new Model(), this);
+    }
+
+    public void run() {
+
     }
 
     //TODO implement action listener
