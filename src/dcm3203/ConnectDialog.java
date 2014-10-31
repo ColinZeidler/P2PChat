@@ -170,10 +170,9 @@ public class ConnectDialog extends JDialog{
         return(true);
     }
 
-/* // Testing stuff
+// Testing stuff
     static public void main(String[] args){
         ConnectDialog dlog = new ConnectDialog(new View(new Model(), new Controller()),"Connect",true);
         dlog.setVisible(true);
     }
-*/
 }

@@ -2,9 +2,7 @@ package dcm3203;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.Vector;
 
 /**
@@ -20,6 +18,9 @@ public class View extends JFrame{
     private JList<User> userJList;
     private JTextField messageBar;
 
+    private final int   VIEW_MIN_WIDTH = 750;
+    private final int   VIEW_MIN_HEIGHT = 600;
+
     public View(Model model, Controller controller) {
         myModel = model;
         myController = controller;
@@ -29,8 +30,10 @@ public class View extends JFrame{
     private void initDisplay() {
         setTitle("Application name");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); //exit the program when the window is closed.
-        setSize(750, 600);
+        setSize(VIEW_MIN_WIDTH, VIEW_MIN_HEIGHT);
         setLocation(100, 100);
+
+        setMinimumSize(new Dimension(VIEW_MIN_WIDTH,VIEW_MIN_HEIGHT)); //  Helps with the sizing issue (maybe not the solution)
 
         //rows, columns, vertical gap, horizontal gap
         setLayout(new GridBagLayout());
