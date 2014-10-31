@@ -31,6 +31,7 @@ public class Controller {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Send Button Test");
+                myView.update();
             }
         };
     }
