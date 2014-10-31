@@ -37,7 +37,7 @@ public class User {
     //Not tested
     public void sendMessage(String message) throws IOException {
         PrintWriter send = new PrintWriter(connection.getOutputStream(), true);
-        String timestamp = this.getCurrentTimeString();
+        String timestamp = User.getCurrentTimeString();
         message = name + " " + timestamp + ": " + message;
         send.print(message);
         send.close();
