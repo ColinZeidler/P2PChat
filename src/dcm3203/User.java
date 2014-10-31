@@ -31,4 +31,9 @@ public class User {
         send.print(message);
         send.close();
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
