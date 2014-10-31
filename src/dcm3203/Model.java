@@ -2,6 +2,7 @@ package dcm3203;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Colin on 2014-10-28.
@@ -9,11 +10,11 @@ import java.util.ArrayList;
 public class Model {
     private ArrayDeque<String> messageHistory;
     private int maxMessages = 750;
-    private ArrayList<User> userList;
+    private Vector<User> userList;
 
     public Model() {
         messageHistory = new ArrayDeque<String>();
-        userList = new ArrayList<User>();
+        userList = new Vector<User>();
     }
 
     public ArrayDeque<String> getMessageHistory() {
@@ -34,11 +35,11 @@ public class Model {
             messageHistory.remove();
     }
 
-    public ArrayList<User> getUserList() {
+    public Vector<User> getUserList() {
         return userList;
     }
 
-    public void setUserList(ArrayList<User> userList) {
+    public void setUserList(Vector<User> userList) {
         this.userList = userList;
     }
 
