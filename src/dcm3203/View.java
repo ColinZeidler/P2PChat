@@ -2,6 +2,8 @@ package dcm3203;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 /**
@@ -72,6 +74,7 @@ public class View extends JFrame{
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 1;
+        sendButton.addActionListener(myController.getSendListener()); //Don't know if this is how it should be done
         this.add(sendButton, c);
 
         //TODO fix shit when resizing
