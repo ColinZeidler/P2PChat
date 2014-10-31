@@ -2,14 +2,14 @@ package dcm3203;
 
 import javax.swing.*;
 import java.awt.*;
-
-import java.awt.event.*;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 /**
  * Created by Colin on 2014-10-28.
  */
-public class View extends JFrame implements ActionListener{
+public class View extends JFrame{
     private Model myModel;
     private Controller myController;
 
@@ -80,19 +80,13 @@ public class View extends JFrame implements ActionListener{
         c.gridy = 1;
         sendButton.addActionListener(myController.getSendListener()); //Don't know if this is how it should be done
         this.add(sendButton, c);
-        sendButton.addActionListener(this);
-        sendButton.setActionCommand("SendButton");
 
         //TODO fix shit when resizing
         setVisible(true);
 
     }
 
-    public void actionPerformed(ActionEvent e){
-        if(e.getActionCommand() == "SendButton"){
-            chatLog.setText( chatLog.getText() + messageBar.getText() + '\n' );
-            messageBar.setText("");
-        }
-    }
+    public void update() {
 
+    }
 }
