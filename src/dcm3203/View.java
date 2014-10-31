@@ -2,6 +2,7 @@ package dcm3203;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 /**
  * Created by Colin on 2014-10-28.
@@ -26,6 +27,16 @@ public class View extends JFrame{
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         //TODO add padding between all elements
+
+        // add application menu
+        JMenuBar menuBar;
+        JMenu menu;
+        menuBar = new JMenuBar();
+        menu = new JMenu("File");
+        menu.setMnemonic(KeyEvent.VK_A);
+        menu.getAccessibleContext().setAccessibleDescription("File Menu");
+        menuBar.add(menu);
+        this.setJMenuBar(menuBar);
 
         // add chat log
         JTextArea chatLog = new JTextArea(30, 40);
