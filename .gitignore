@@ -14,7 +14,7 @@
 hs_err_pid*
 
 # IDE specific files
-.idea/
-*.iml
+#.idea/
+#*.iml
 src/META-INF/
 out/
