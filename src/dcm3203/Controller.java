@@ -24,6 +24,8 @@ public class Controller {
     }
 
     public void run() {
+        //TODO spin off new Thread for incoming connection handling
+        //TODO spin off new Thread for UDP discovery handling
         for (int i = 0; i < 250; i++) {
             myModel.addMessage("new message: " + i);
             myView.update();
@@ -33,9 +35,10 @@ public class Controller {
             myModel.addUser(new User("User " + i, null));
             myView.update();
         }
+
+        //TODO handle incoming messages from users
     }
 
-    //TODO implement action listener
     public ActionListener getSendListener() {
         return new ActionListener() {
             @Override
