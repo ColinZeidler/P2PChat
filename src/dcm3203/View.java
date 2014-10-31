@@ -2,16 +2,22 @@ package dcm3203;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+
+import java.awt.event.*;
+
 
 /**
  * Created by Colin on 2014-10-28.
  */
-public class View extends JFrame{
+public class View extends JFrame implements ActionListener{
     private Model myModel;
     private Controller myController;
+
+    private JTextArea chatLog;
+    private JMenuBar menuBar;
+    private JMenu menu;
+    private JList<User> userJList;
+    private JTextField messageBar;
 
     public View(Model model, Controller controller) {
         myModel = model;
@@ -31,8 +37,6 @@ public class View extends JFrame{
         //TODO add padding between all elements
 
         // add application menu
-        JMenuBar menuBar;
-        JMenu menu;
         menuBar = new JMenuBar();
         menu = new JMenu("File");
         menu.setMnemonic(KeyEvent.VK_A);
@@ -41,7 +45,7 @@ public class View extends JFrame{
         this.setJMenuBar(menuBar);
 
         // add chat log
-        JTextArea chatLog = new JTextArea(30, 40);
+        chatLog = new JTextArea(30, 40);
         chatLog.setEditable(false);
         JScrollPane chatScrollPane = new JScrollPane(chatLog);
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -52,7 +56,7 @@ public class View extends JFrame{
 
 
         // add user list
-        JList<User> userJList = new JList<User>();
+        userJList = new JList<User>();
         JScrollPane userScrollPane = new JScrollPane(userJList);
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 1;
@@ -62,7 +66,7 @@ public class View extends JFrame{
 
 
         // add message bar
-        JTextField messageBar = new JTextField();
+        messageBar = new JTextField();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 1;
@@ -76,9 +80,19 @@ public class View extends JFrame{
         c.gridy = 1;
         sendButton.addActionListener(myController.getSendListener()); //Don't know if this is how it should be done
         this.add(sendButton, c);
+        sendButton.addActionListener(this);
+        sendButton.setActionCommand("SendButton");
 
         //TODO fix shit when resizing
         setVisible(true);
 
     }
+
+    public void actionPerformed(ActionEvent e){
+        if(e.getActionCommand() == "SendButton"){
+            chatLog.setText( chatLog.getText() + messageBar.getText() + '\n' );
+            messageBar.setText("");
+        }
+    }
+
 }
