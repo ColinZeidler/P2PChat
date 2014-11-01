@@ -47,10 +47,8 @@ public class UDPDiscoveryHandle implements Runnable {
                     socket.send(sendPacket);
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }

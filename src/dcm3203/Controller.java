@@ -28,8 +28,8 @@ public class Controller {
     }
 
     public Controller() {
-        myModel = new Model();
-        myView = new View(myModel, this);
+        myModel = Model.getInstance();
+        myView = new View(this);
         myConnect = new ConnectDialog(myView, "Connect", true);
         myConnect.setVisible(true);
     }
@@ -40,7 +40,7 @@ public class Controller {
         Thread inConnect = new Thread(new ConnectionServer(connectionPort));
         inConnect.start();
 
-        //TODO spin off new Thread for UDP discovery handling (just a shell)
+        // spin off new Thread for UDP discovery handling
         Thread discoverHandle = new Thread(new UDPDiscoveryHandle(udpPort));
         discoverHandle.start();
 

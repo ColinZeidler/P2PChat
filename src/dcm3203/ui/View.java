@@ -24,8 +24,8 @@ public class View extends JFrame{
     private final int   VIEW_MIN_WIDTH = 750;
     private final int   VIEW_MIN_HEIGHT = 600;
 
-    public View(Model model, Controller controller) {
-        myModel = model;
+    public View(Controller controller) {
+        myModel = Model.getInstance();
         myController = controller;
         initDisplay();
     }

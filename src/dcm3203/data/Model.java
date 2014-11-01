@@ -10,10 +10,17 @@ public class Model {
     private ArrayDeque<String> messageHistory;
     private int maxMessages = 750;
     private Vector<User> userList;
+    private static Model instance;
 
     public Model() {
         messageHistory = new ArrayDeque<String>();
         userList = new Vector<User>();
+    }
+
+    public static Model getInstance() {
+        if (instance == null)
+            instance = new Model();
+        return instance;
     }
 
     public ArrayDeque<String> getMessageHistory() {
