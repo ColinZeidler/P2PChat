@@ -213,7 +213,8 @@ public class ConnectDialog extends JDialog{
     }
 
     private void cancelButtonPressed() {
-        if (getOwner() != null) getOwner().dispose();
+        if (getOwner() != null)
+            getOwner().dispatchEvent(new WindowEvent(getOwner(), WindowEvent.WINDOW_CLOSING)); //properly kills the program
         dispose();
     }
 
