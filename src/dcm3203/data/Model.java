@@ -11,6 +11,7 @@ public class Model {
     private int maxMessages = 750;
     private Vector<User> userList;
     private static Model instance;
+    private String myName;
 
     public Model() {
         messageHistory = new ArrayDeque<String>();
@@ -55,5 +56,13 @@ public class Model {
 
     public void removeUser(User user) {
         this.userList.remove(user);
+    }
+
+    public String getMyName() {
+        return myName;
+    }
+
+    public void setMyName(String myName) {
+        this.myName = myName;
     }
 }
