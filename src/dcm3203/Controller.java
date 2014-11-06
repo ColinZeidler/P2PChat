@@ -52,20 +52,6 @@ public class Controller {
         Thread discoverHandle = new Thread(new UDPDiscoveryHandle(udpPort));
         discoverHandle.start();
 
-        for (int i = 0; i < 250; i++) {
-            myModel.addMessage("new message: " + i);
-            myView.update();
-        }
-
-        for (int i = 0; i < 40; i ++) {
-            try {
-                myModel.addUser(new User("User " + i, null));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            myView.update();
-        }
-
         //TODO handle incoming messages from users
         while (true) {
             Vector<User> newUsers = new Vector<User>(1);
@@ -74,7 +60,6 @@ public class Controller {
                 try {
                      fromUser = new BufferedReader(new InputStreamReader(user.getConnection().getInputStream()));
                 } catch (NullPointerException e) {
-                    e.printStackTrace();
                     continue;
                 }catch (IOException e) {
                     e.printStackTrace();
