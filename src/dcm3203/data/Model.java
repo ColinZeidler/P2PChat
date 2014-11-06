@@ -13,6 +13,11 @@ public class Model {
     private static Model instance;
     private String myName;
 
+    public static final int textCode = 0;
+    public static final int connectCode = 3;
+    public static final int fileAdCode = 1;
+    public static final int fileReqCode = 2;
+
     public Model() {
         messageHistory = new ArrayDeque<String>();
         userList = new Vector<User>();
