@@ -24,9 +24,11 @@ public class ConnectDialog extends JDialog{
     private JButton             joinListedIP;
     private JButton             joinEnteredIP;
     private JButton             cancelButton;
+    private JLabel              enterNameLabel;
     private JList<String>       listIP;
     private JScrollPane         listPane;
     private JTextField          enterIP;
+    private JTextField          enterNameField;
 
     /////
     //   The handlers
@@ -49,6 +51,8 @@ public class ConnectDialog extends JDialog{
 
     static private final int            CDIALOG_BUTTON_WIDTH = 150;         //  Width of each button
     static private final int            CDIALOG_BUTTON_HEIGHT = 25;         //  Height of each button (and textbox)
+
+    static private final int            CDIALOG_NAME_LABEL_WIDTH = 100;     //  The width of the name label
 
     static private final String         NO_PEERS = "No peers found";        //  Empty list const string
 
@@ -128,12 +132,17 @@ public class ConnectDialog extends JDialog{
                 (int)(getToolkit().getScreenSize().getHeight()/2 - getHeight()/2));
         setLayout(null);
 
+        enterNameLabel = new JLabel("Enter User Name:");
+        this.add(enterNameLabel);
+
+        enterNameField = new JTextField();
+        this.add(enterNameField);
+
         listIP = new JList<String>();
         //listIP.addMouseListener(listListener);
         listPane = new JScrollPane(listIP,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        listPane.setLocation(CDIALOG_PAD, CDIALOG_PAD);
         listIP.addMouseListener(listIPAdapter);
         this.add(listPane);
 
@@ -164,21 +173,31 @@ public class ConnectDialog extends JDialog{
     //   This function sets up the positions and width/heights of the components
     //
     private void updatePositions() {
+
+        enterNameLabel.setLocation(CDIALOG_PAD, CDIALOG_PAD);
+        enterNameLabel.setSize(CDIALOG_NAME_LABEL_WIDTH, CDIALOG_BUTTON_HEIGHT);
+
+        enterNameField.setLocation(enterNameLabel.getLocation().x + CDIALOG_NAME_LABEL_WIDTH + CDIALOG_PAD,
+                enterNameLabel.getLocation().y);
+        enterNameField.setSize(getWidth() - enterNameField.getLocation().x - CDIALOG_PAD*3 - CDIALOG_BUTTON_WIDTH,
+                CDIALOG_BUTTON_HEIGHT);
+
+        listPane.setLocation(CDIALOG_PAD, CDIALOG_PAD*2 + CDIALOG_BUTTON_HEIGHT);
         listPane.setSize(CDIALOG_WIDTH - CDIALOG_BUTTON_WIDTH - CDIALOG_PAD*4,
-                CDIALOG_HEIGHT - (CDIALOG_PAD*5 + CDIALOG_BUTTON_HEIGHT*3));
+                CDIALOG_HEIGHT - (CDIALOG_PAD*6 + CDIALOG_BUTTON_HEIGHT*4));
 
         enterIP.setLocation(CDIALOG_PAD,
-                CDIALOG_HEIGHT - (CDIALOG_PAD + CDIALOG_BUTTON_HEIGHT)*3);
+        CDIALOG_HEIGHT - (CDIALOG_PAD + CDIALOG_BUTTON_HEIGHT)*3);
         enterIP.setSize(listPane.getWidth(),
                 CDIALOG_BUTTON_HEIGHT);
 
         joinListedIP.setLocation(CDIALOG_WIDTH - CDIALOG_BUTTON_WIDTH - CDIALOG_PAD*2,
-                (CDIALOG_PAD + CDIALOG_BUTTON_HEIGHT)*2);
+                (CDIALOG_PAD + CDIALOG_BUTTON_HEIGHT)*3);
         joinListedIP.setSize(CDIALOG_BUTTON_WIDTH,
                 CDIALOG_BUTTON_HEIGHT);
 
         searchLocalIP.setLocation(joinListedIP.getLocation().x,
-                CDIALOG_PAD + CDIALOG_BUTTON_HEIGHT);
+                (CDIALOG_PAD + CDIALOG_BUTTON_HEIGHT)*2);
         searchLocalIP.setSize(joinListedIP.getSize());
 
         joinEnteredIP.setLocation(joinListedIP.getLocation().x,
@@ -224,7 +243,11 @@ public class ConnectDialog extends JDialog{
 
     private void enterIPCheck(String ip) {
         if(isValidIP(ip)) {
-            selectIP(ip);
+            if(isValidName(enterNameField.getText())) {
+                selectIP(ip);
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid Name entered! {list requirements}", "Warning!", JOptionPane.WARNING_MESSAGE);
+            }
         } else {
             JOptionPane.showMessageDialog(this, "Invalid IP entered!", "Warning!", JOptionPane.WARNING_MESSAGE);
         }
@@ -241,9 +264,10 @@ public class ConnectDialog extends JDialog{
     }
 
     private void selectIP(String ip) {
-        // TODO send out to connect to IP
+        // TODO send out to connect to IP, store name
         //if (getOwner() != null) ((View)getOwner()).ipFunction(ip); // not actual function name
         System.out.println(ip);
+        System.out.println(enterNameField.getText());
     }
 
     /////
@@ -269,11 +293,7 @@ public class ConnectDialog extends JDialog{
         return(true);
     }
 
-    /*
-// Testing stuff
-    static public void main(String[] args){
-        ConnectDialog dlog = new ConnectDialog(new View(new Model(), new Controller()),"Connect",true);
-        dlog.setVisible(true);
+    static public boolean isValidName(String name) {
+        return (name == null);
     }
-    */
 }
