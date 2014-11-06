@@ -73,7 +73,10 @@ public class Controller {
                 BufferedReader fromUser = null;
                 try {
                      fromUser = new BufferedReader(new InputStreamReader(user.getConnection().getInputStream()));
-                } catch (IOException e) {
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    continue;
+                }catch (IOException e) {
                     e.printStackTrace();
                 }
 
