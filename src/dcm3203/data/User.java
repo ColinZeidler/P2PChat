@@ -45,7 +45,7 @@ public class User {
     //Not tested
     public void sendText(String message) throws IOException {
         String timestamp = User.getCurrentTimeString();
-        message = name + " " + timestamp + ": " + message + '\n';
+        message = Model.getInstance().getMyName() + " " + timestamp + ": " + message + '\n';
         sendStream.writeInt(Model.textCode);
         sendStream.writeBytes(message);
     }
