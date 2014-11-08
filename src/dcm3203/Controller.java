@@ -72,24 +72,10 @@ public class Controller {
                                 myModel.addMessage(fromUser.readLine());
                                 myView.update();
                                 break;
-                            case Model.connectCode: //TODO move this block into a function
-                                String host = fromUser.readLine();
-                                Socket socket;
-                                try {
-                                    socket = new Socket(host, connectionPort);
-                                } catch (UnknownHostException e) {
-                                    break;
-                                }
-                                DataOutputStream sender = new DataOutputStream(socket.getOutputStream());
-                                //Send data to the new guy
-                                sender.writeInt(0);     //Tell the client not to have everyone else connect to me
-                                sender.writeBytes(myModel.getMyName() + '\n');
-                                sender.close();
-                                //receive from the new guy
-                                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                                String name = reader.readLine();
-                                reader.close();
-                                newUsers.add(new User(name, socket));
+                            case Model.connectCode:
+                                User temp = incomingConnect(fromUser);
+                                if (temp != null)
+                                    newUsers.add(temp);
                                 break;
                             case Model.fileAdCode: break;
                             case Model.fileReqCode: break;
@@ -106,6 +92,28 @@ public class Controller {
                 myModel.addUser(newUser);
             }
         }
+    }
+
+    private User incomingConnect(BufferedReader fromUser) throws IOException{
+        User newUser = null;
+        String host = fromUser.readLine();
+        Socket socket;
+        try {
+            socket = new Socket(host, connectionPort);
+        } catch (UnknownHostException e) {
+            return null;
+        }
+        DataOutputStream sender = new DataOutputStream(socket.getOutputStream());
+        //Send data to the new guy
+        sender.writeInt(0);     //Tell the client not to have everyone else connect to me
+        sender.writeBytes(myModel.getMyName() + '\n');
+        sender.close();
+        //receive from the new guy
+        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        String name = reader.readLine();
+        reader.close();
+        newUser = new User(name, socket);
+        return newUser;
     }
 
     public ActionListener getSendListener() {
