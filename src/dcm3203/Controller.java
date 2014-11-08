@@ -25,7 +25,8 @@ public class Controller {
     private View myView;
     private Model myModel;
     private ConnectDialog myConnect;
-    private int connectionPort = 60023, udpPort = 60022;
+    private final int connectionPort = 60023, udpPort = 60022;
+    private final long loopPauseTime = 25;
     /**
      * Entry method
      * @param args command line args, ignored
@@ -54,6 +55,8 @@ public class Controller {
 
         //TODO handle incoming messages from users
         while (true) {
+            long startTime = System.currentTimeMillis();
+
             Vector<User> newUsers = new Vector<User>(1);
             for (User user: myModel.getUserList()) {
                 BufferedReader fromUser = null;
@@ -90,6 +93,16 @@ public class Controller {
 
             for (User newUser: newUsers) {
                 myModel.addUser(newUser);
+            }
+            long endTime = System.currentTimeMillis();
+            long diff = endTime - startTime;
+            System.out.println(diff);
+            if (diff <= loopPauseTime) {
+                try {
+                    Thread.sleep(loopPauseTime - diff);
+                } catch (InterruptedException e) {
+                    //do nothing
+                }
             }
         }
     }
