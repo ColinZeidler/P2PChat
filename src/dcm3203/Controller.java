@@ -45,7 +45,7 @@ public class Controller {
 
     public void run() {
 
-        //TODO spin off new Thread for incoming connection handling (just a shell right now)
+        // spin off new Thread for incoming connection handling (just a shell right now)
         Thread inConnect = new Thread(new ConnectionServer(connectionPort));
         inConnect.start();
 
@@ -53,7 +53,7 @@ public class Controller {
         Thread discoverHandle = new Thread(new UDPDiscoveryHandle(udpPort));
         discoverHandle.start();
 
-        //TODO handle incoming messages from users
+        // handle incoming messages from users
         while (true) {
             long startTime = System.currentTimeMillis();
 
