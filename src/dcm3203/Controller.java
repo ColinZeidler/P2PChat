@@ -26,7 +26,7 @@ public class Controller {
     private Model myModel;
     private ConnectDialog myConnect;
     private final int connectionPort = 60023, udpPort = 60022;
-    private final long loopPauseTime = 25;
+    private final long loopPauseTime = 25;  //number of milliseconds to sleep for in each loop
     /**
      * Entry method
      * @param args command line args, ignored
