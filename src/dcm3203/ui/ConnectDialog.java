@@ -20,10 +20,11 @@ public class ConnectDialog extends JDialog{
     /////
     //   All the components
     //
-    private JButton             searchLocalIP;
+    private JButton             cancelButton;
+    private JButton             infoOnNameButton;
     private JButton             joinListedIP;
     private JButton             joinEnteredIP;
-    private JButton             cancelButton;
+    private JButton             searchLocalIP;
     private JLabel              enterNameLabel;
     private JList<String>       listIP;
     private JScrollPane         listPane;
@@ -33,28 +34,42 @@ public class ConnectDialog extends JDialog{
     /////
     //   The handlers
     //
-    private ActionListener      searchAction;       //  The handler to search for peers
     private ActionListener      cancelAction;       //  The handler for quitting the app
-    private ActionListener      listIPAction;       //  The handler for an IP found by discovery
     private ActionListener      enterIPAction;      //  The handler for an IP entered by user
+    private ActionListener      infoOnNameAction;   //  The handler for getting info on the format of the name
+    private ActionListener      listIPAction;       //  The handler for an IP found by discovery
+    private ActionListener      searchAction;       //  The handler to search for peers
     private ComponentAdapter    resizeAdapter;      //  TODO get this working
     private MouseAdapter        listIPAdapter;      //  The handle for clicking on the list
 
     /////
     //   The constant values
     //
+    ///////
+      //   To do with the sizing of the dialog
+      //
     static private final boolean        CDIALOG_RESIZABLE = false; // 'true' doesn't work properly
 
-    static private final int            CDIALOG_WIDTH = 600;                //  Window width
-    static private final int            CDIALOG_HEIGHT = 400;               //  Window height
-    static private final int            CDIALOG_PAD = 5;                    //  Padding between components
+    static private final int            CDIALOG_WIDTH  = 600;                   //  Window width
+    static private final int            CDIALOG_HEIGHT = 400;                   //  Window height
+    static private final int            CDIALOG_PAD    = 5;                     //  Padding between components
 
-    static private final int            CDIALOG_BUTTON_WIDTH = 150;         //  Width of each button
-    static private final int            CDIALOG_BUTTON_HEIGHT = 25;         //  Height of each button (and textbox)
+    static private final int            CDIALOG_BUTTON_WIDTH  = 150;            //  Width of each button
+    static private final int            CDIALOG_BUTTON_HEIGHT = 25;             //  Height of each button (and textbox)
 
-    static private final int            CDIALOG_NAME_LABEL_WIDTH = 100;     //  The width of the name label
+    static private final int            CDIALOG_NAME_LABEL_WIDTH = 100;         //  The width of the name label
 
-    static private final String         NO_PEERS = "No peers found";        //  Empty list const string
+      /////
+      //   For the list of IPs
+      //
+    static private final String         NO_PEERS = "No peers found";            //  Empty list const string
+
+      /////
+      //   For the check of a valid name
+      //
+    static private final String         IS_NAME_VALID_REGEX      = "[a-zA-Z]([a-zA-Z0-9[ |_|'|-]]*([a-zA-Z0-9]))?";    //  The check for valid name
+    static private final String         IS_NAME_CHAR_VALID_REGEX = "[a-zA-Z0-9 _'-]";
+    static private final int            NAME_MAX_LEN             = 64;
 
     public ConnectDialog(Frame owner, String title, boolean modal) {
         super(owner, title, modal);
@@ -70,17 +85,30 @@ public class ConnectDialog extends JDialog{
     //
     private void initHandlers() {
 
-        searchAction = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // TODO call to get list, do search, whatever
-            }
-        };
-
         cancelAction = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cancelButtonPressed();
+            }
+        };
+
+        enterIPAction = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                enterIPCheck(enterIP.getText());
+            }
+        };
+
+        infoOnNameAction = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog((Component)e.getSource(),
+                        "Name format must be as follows: \n" +
+                                " - Can contain letters, numbers, spaces, underscores, hyphens, apostrophes \n" +
+                                " - Must start with a letter \n" +
+                                " - Must end in a letter or number \n" +
+                                " - Maximum length of " + NAME_MAX_LEN + " characters",
+                        "Name Format", JOptionPane.INFORMATION_MESSAGE);
             }
         };
 
@@ -91,10 +119,10 @@ public class ConnectDialog extends JDialog{
             }
         };
 
-        enterIPAction = new ActionListener() {
+        searchAction = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                enterIPCheck(enterIP.getText());
+                // TODO call to get list, do search, whatever
             }
         };
 
@@ -152,6 +180,10 @@ public class ConnectDialog extends JDialog{
         /////
         //   Sets up the buttons
         //
+        infoOnNameButton = new JButton("Info On Name...");
+        infoOnNameButton.addActionListener(infoOnNameAction);
+        add(infoOnNameButton);
+
         searchLocalIP = new JButton("Search For Peers");
         searchLocalIP.addActionListener(searchAction);
         add(searchLocalIP);
@@ -196,6 +228,10 @@ public class ConnectDialog extends JDialog{
         joinListedIP.setSize(CDIALOG_BUTTON_WIDTH,
                 CDIALOG_BUTTON_HEIGHT);
 
+        infoOnNameButton.setLocation(joinListedIP.getLocation().x,
+                CDIALOG_PAD);
+        infoOnNameButton.setSize(joinListedIP.getSize());
+
         searchLocalIP.setLocation(joinListedIP.getLocation().x,
                 (CDIALOG_PAD + CDIALOG_BUTTON_HEIGHT)*2);
         searchLocalIP.setSize(joinListedIP.getSize());
@@ -214,15 +250,6 @@ public class ConnectDialog extends JDialog{
 
         // TODO get list data, empty means no IPs found
 
-        // Test data
-/*
-        listData = new String[5];
-        listData[0] = "128.128.128.128";
-        listData[1] = "128.128.1542.128";
-        listData[2] = "128.abc.128.128";
-        listData[3] = "NULL";
-        listData[4] = "128.128";
-*/
         if (listData.length == 0) {
             listData = new String[1];
             listData[0] = NO_PEERS;
@@ -243,10 +270,22 @@ public class ConnectDialog extends JDialog{
 
     private void enterIPCheck(String ip) {
         if(isValidIP(ip)) {
-            if(isValidName(enterNameField.getText())) {
+            String name = enterNameField.getText();
+            if(isValidName(name)) {
                 selectIP(ip);
             } else {
-                JOptionPane.showMessageDialog(this, "Invalid Name entered! {list requirements}", "Warning!", JOptionPane.WARNING_MESSAGE);
+                String errMes;
+
+                if (name.length() <= 0) {
+                    errMes = "No name entered!";
+                } else if (name.length() > NAME_MAX_LEN) {
+                    errMes = "Name too long! Maximum of " + NAME_MAX_LEN + " characters!";
+                } else {
+                    String invalidChars = getInvalidCharacters(name);
+                    errMes = "Name contains invalid character: " + invalidChars + "!";
+                }
+
+                JOptionPane.showMessageDialog(this, errMes, "Warning!", JOptionPane.WARNING_MESSAGE);
             }
         } else {
             JOptionPane.showMessageDialog(this, "Invalid IP entered!", "Warning!", JOptionPane.WARNING_MESSAGE);
@@ -267,7 +306,6 @@ public class ConnectDialog extends JDialog{
         // TODO send out to connect to IP, store name
         //if (getOwner() != null) ((View)getOwner()).ipFunction(ip); // not actual function name
         System.out.println(ip);
-        System.out.println(enterNameField.getText());
     }
 
     /////
@@ -293,7 +331,24 @@ public class ConnectDialog extends JDialog{
         return(true);
     }
 
-    static public boolean isValidName(String name) {
-        return (name == null);
+    static public boolean isValidName(String name) { return (name.length() > 0
+            && name.matches(IS_NAME_VALID_REGEX)
+            && name.length() <= NAME_MAX_LEN); }
+
+    static public String getInvalidCharacters(String name) {
+        String rString = "";
+
+        for (int i = 0; i < name.length(); i++) {
+            String invalidChar = String.valueOf(name.charAt(i));
+
+            if (!invalidChar.matches(IS_NAME_CHAR_VALID_REGEX))
+                if(!rString.contains(invalidChar))
+                    rString += invalidChar + ", ";
+        }
+
+        if (rString.length() > 0)                                   //  Ensures no errors will happen then
+            rString = rString.substring(0, rString.length() - 2);   //  Removes the last comma since no character after it
+
+        return (rString);
     }
 }
