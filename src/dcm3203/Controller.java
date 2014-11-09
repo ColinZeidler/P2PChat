@@ -39,7 +39,7 @@ public class Controller {
     public Controller() {
         myModel = Model.getInstance();
         myView = new View(this);
-        myConnect = new ConnectDialog(myView, "Connect", true);
+        myConnect = new ConnectDialog(myView, "Connect", true, this);
         myConnect.setVisible(true);
     }
 
@@ -64,7 +64,7 @@ public class Controller {
                      fromUser = new BufferedReader(new InputStreamReader(user.getConnection().getInputStream()));
                 } catch (NullPointerException e) {
                     continue;
-                }catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
 
@@ -85,7 +85,7 @@ public class Controller {
                         }
                     } catch (SocketTimeoutException e) { //Socket will timeout if there is no data to receive
                         continue;
-                    }catch (IOException e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -105,6 +105,27 @@ public class Controller {
                 }
             }
         }
+    }
+
+    public boolean setupConnection(String ip) throws IOException{
+        Socket newSocket;
+
+        try {
+            newSocket = new Socket(ip, connectionPort);
+        } catch (UnknownHostException e) {
+            return (false);
+        }
+
+        DataOutputStream send = new DataOutputStream(newSocket.getOutputStream());
+        send.writeInt(1);
+        send.close();
+        BufferedReader incoming = new BufferedReader(new InputStreamReader(newSocket.getInputStream()));
+
+        String name = incoming.readLine();
+        incoming.close();
+        Model.getInstance().addUser(new User(name, newSocket));
+
+        return(true);
     }
 
     private User incomingConnect(BufferedReader fromUser) throws IOException{

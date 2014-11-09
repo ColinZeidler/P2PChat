@@ -3,6 +3,9 @@ package dcm3203.ui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+
+import dcm3203.Controller;
 
 /**
  * Created by Michael on 30/10/2014.
@@ -11,25 +14,32 @@ import java.awt.event.*;
  * NOTES:
  *  - IP assumed to be in strings
  *  TODO call correct function to send specified IP to main part of program
- *  TODO make sure exit button works with main program
  *  TODO get local IPs to list
  *
  */
 public class ConnectDialog extends JDialog{
 
     /////
+    //   Controller
+    //     NOTE : Added this to call a function from the controller that uses the dialog instead of doing
+    //           any connecting within the dialog class since this class should really only have functions
+    //           and such that has to do with the dialog itself
+    //
+    private Controller control;     //  Used to send the IP to a function to connect to the address
+
+    /////
     //   All the components
     //
-    private JButton             cancelButton;
-    private JButton             infoOnNameButton;
-    private JButton             joinListedIP;
-    private JButton             joinEnteredIP;
-    private JButton             searchLocalIP;
+    private JButton             cancelButton;           //  For quitting the app
+    private JButton             infoOnNameButton;       //  For getting the info on name format
+    private JButton             joinListedIP;           //  For joining an IP from the list of local IPs
+    private JButton             joinEnteredIP;          //  For joining an IP entered by the user
+    private JButton             searchLocalIP;          //  For getting the list of local IPs
     private JLabel              enterNameLabel;
-    private JList<String>       listIP;
+    private JList<String>       listIP;                 //  The list of local IPs
     private JScrollPane         listPane;
-    private JTextField          enterIP;
-    private JTextField          enterNameField;
+    private JTextField          enterIP;                //  The field for the user to enter an IP
+    private JTextField          enterNameField;         //  The field for the user to enter a username
 
     /////
     //   The handlers
@@ -62,7 +72,7 @@ public class ConnectDialog extends JDialog{
       /////
       //   For the list of IPs
       //
-    static private final String         NO_PEERS = "No peers found";            //  Empty list const string
+    static private final String         NO_PEERS_FOUND = "No peers found";                  //  Empty list const string
 
       /////
       //   For the check of a valid name
@@ -71,8 +81,10 @@ public class ConnectDialog extends JDialog{
     static private final String         IS_NAME_CHAR_VALID_REGEX = "[a-zA-Z0-9 _'-]";
     static private final int            NAME_MAX_LEN             = 64;
 
-    public ConnectDialog(Frame owner, String title, boolean modal) {
+    public ConnectDialog(Frame owner, String title, boolean modal, Controller control) {
         super(owner, title, modal);
+
+        this.control = control;
 
         initHandlers();
         initVisual();
@@ -167,7 +179,6 @@ public class ConnectDialog extends JDialog{
         this.add(enterNameField);
 
         listIP = new JList<String>();
-        //listIP.addMouseListener(listListener);
         listPane = new JScrollPane(listIP,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -252,7 +263,7 @@ public class ConnectDialog extends JDialog{
 
         if (listData.length == 0) {
             listData = new String[1];
-            listData[0] = NO_PEERS;
+            listData[0] = NO_PEERS_FOUND;
         }
 
         listIP.setListData(listData);
@@ -295,7 +306,7 @@ public class ConnectDialog extends JDialog{
     private void listIPCheck(String ip) {
         if(ip == null) {
             JOptionPane.showMessageDialog(this, "No IP selected from list!", "Warning!", JOptionPane.WARNING_MESSAGE);
-        } else if (ip.equals(NO_PEERS)) {
+        } else if (ip.equals(NO_PEERS_FOUND)) {
             JOptionPane.showMessageDialog(this, "No IPs in the list!", "Warning!", JOptionPane.WARNING_MESSAGE);
         } else {
             enterIPCheck(ip);
@@ -303,9 +314,16 @@ public class ConnectDialog extends JDialog{
     }
 
     private void selectIP(String ip) {
-        // TODO send out to connect to IP, store name
-        //if (getOwner() != null) ((View)getOwner()).ipFunction(ip); // not actual function name
-        System.out.println(ip);
+        try {
+            if(!control.setupConnection(ip)) {
+                JOptionPane.showMessageDialog(this, "Error: Connection was not successful!", "Something went wrong!", JOptionPane.ERROR_MESSAGE);
+            } else {
+                this.dispose();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error: Connection was not successful!", "Something went wrong!", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /////
