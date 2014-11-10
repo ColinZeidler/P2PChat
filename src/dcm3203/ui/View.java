@@ -94,7 +94,9 @@ public class View extends JFrame{
     }
 
     public String getMessage(){
-        return messageBar.getText();
+        String message = messageBar.getText();
+        messageBar.setText("");
+        return message;
     }
     public void update() {
         chatLog.setText(""); //clear the chat log
