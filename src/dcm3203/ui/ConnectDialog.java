@@ -336,6 +336,9 @@ public class ConnectDialog extends JDialog{
         return (true);
     }
 
+    /////
+    //   Sends the ip to the controller to connect
+    //      - is done after the ip has been verified as a valid format
     private void selectIP(String ip) {
         try {
             if(!control.setupConnection(ip)) {
@@ -349,6 +352,9 @@ public class ConnectDialog extends JDialog{
         }
     }
 
+    /////
+    //   Sets the name of the user, sets the variable in the model
+    //
     private void setMyName(String name) { Model.getInstance().setMyName(name); }
 
     /////
@@ -373,6 +379,9 @@ public class ConnectDialog extends JDialog{
         enterIP.setSize(listPane.getWidth(),
                 (int)CDIALOG_BUTTON.getHeight());
 
+        /////
+        //   Sets up the locations and sizes of each button
+        //
         infoOnNameButton.setLocation((int)CDIALOG.getWidth() - (int)CDIALOG_BUTTON.getWidth() - CDIALOG_PAD*2,
                 CDIALOG_PAD);
         infoOnNameButton.setSize(CDIALOG_BUTTON);
