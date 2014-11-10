@@ -16,8 +16,6 @@ public class View extends JFrame{
     private Controller myController;
 
     private JTextArea chatLog;
-    private JMenuBar menuBar;
-    private JMenu menu;
     private JList<User> userJList;
     private JTextField messageBar;
 
@@ -43,12 +41,48 @@ public class View extends JFrame{
         GridBagConstraints c = new GridBagConstraints();
 
         // add application menu
+        JMenuBar menuBar;
+        JMenu menu;
+        JMenuItem menuItem;
+
         menuBar = new JMenuBar();
+        this.setJMenuBar(menuBar);
+
         menu = new JMenu("File");
-        menu.setMnemonic(KeyEvent.VK_A);
+        menu.setMnemonic(KeyEvent.VK_F);
         menu.getAccessibleContext().setAccessibleDescription("File Menu");
         menuBar.add(menu);
-        this.setJMenuBar(menuBar);
+
+        menuItem = new JMenuItem("Connect to New Room",
+                KeyEvent.VK_N);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_N, InputEvent.ALT_MASK));
+        menuItem.getAccessibleContext().setAccessibleDescription(
+                "Brings the connection dialog back up to connect to a new room");
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Advertise File",
+                KeyEvent.VK_A);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_A, InputEvent.ALT_MASK));
+        menuItem.getAccessibleContext().setAccessibleDescription(
+                "Advertises file to other users to download");
+        menu.add(menuItem);
+
+        menu.addSeparator();
+        menuItem = new JMenuItem("Exit",
+                KeyEvent.VK_E);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_F4, InputEvent.ALT_MASK));
+        menuItem.getAccessibleContext().setAccessibleDescription(
+                "Quit the application");
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+        menu.add(menuItem);
 
         // add chat log
         chatLog = new JTextArea(30, 40);
