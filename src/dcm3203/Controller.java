@@ -99,7 +99,7 @@ public class Controller {
             }
             long endTime = System.currentTimeMillis();
             long diff = endTime - startTime;
-            System.out.println(diff);
+//            System.out.println(diff);
             if (diff <= loopPauseTime) {
                 try {
                     Thread.sleep(loopPauseTime - diff);
@@ -110,6 +110,13 @@ public class Controller {
         }
     }
 
+    /**
+     * Connect to a remote room,
+     * Is called when the user enters or selects an IP then clicks Join
+     * @param ip the ip of the room to connect to
+     * @return success value, true if connection worked, false if failed.
+     * @throws IOException
+     */
     public boolean setupConnection(String ip) throws IOException{
         Socket newSocket;
 
@@ -131,6 +138,15 @@ public class Controller {
         return(true);
     }
 
+    /**
+     * Handles incoming message that is flagged as a request to connect to a new user
+     * receives an IP address from a remote client,
+     * and then connects to it, gets the new users name and creates a User object
+     *
+     * @param fromUser the input stream from the User sending the message
+     * @return The User that we just connected to
+     * @throws IOException
+     */
     private User incomingConnect(BufferedReader fromUser) throws IOException{
         User newUser = null;
         String host = fromUser.readLine();

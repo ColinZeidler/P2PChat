@@ -51,7 +51,7 @@ public class ConnectionServer implements Runnable{
                 send.writeBytes(myModel.getMyName() + '\n');
 
                 if (newToTheRoom == 1) {
-                    send.writeInt(myModel.getUserList().size());
+//                    send.writeInt(myModel.getUserList().size());
                     for (User user : myModel.getUserList()) {
                         user.sendConnect(newSocket.getInetAddress().getHostAddress());
                     }
