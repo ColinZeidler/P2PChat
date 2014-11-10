@@ -33,6 +33,7 @@ public class UDPDiscoveryHandle implements Runnable {
 
             while (true) {
                 //receive packet
+                System.out.println("TEST BY MOOP IN HURR"); // TODO get rid jsut to show
                 byte[] recvBuff = new byte[4096];
                 DatagramPacket packet = new DatagramPacket(recvBuff, recvBuff.length);
                 socket.receive(packet);

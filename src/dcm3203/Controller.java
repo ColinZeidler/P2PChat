@@ -40,18 +40,21 @@ public class Controller {
         myModel = Model.getInstance();
         myView = new View(this);
         myConnect = new ConnectDialog(myView, "Connect", true, this);
-        myConnect.setVisible(true);
     }
 
     public void run() {
 
-        // spin off new Thread for incoming connection handling (just a shell right now)
-        Thread inConnect = new Thread(new ConnectionServer(connectionPort));
-        inConnect.start();
-
         // spin off new Thread for UDP discovery handling
         Thread discoverHandle = new Thread(new UDPDiscoveryHandle(udpPort));
         discoverHandle.start();
+
+        myConnect.setVisible(true);
+
+        System.out.println("TEST BY MOOP"); // TODO get rid jsut to show
+
+        // spin off new Thread for incoming connection handling (just a shell right now)
+        Thread inConnect = new Thread(new ConnectionServer(connectionPort));
+        inConnect.start();
 
         // handle incoming messages from users
         while (true) {
