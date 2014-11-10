@@ -173,7 +173,8 @@ public class Controller {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                myModel.addMessage("Send message!!!");
+                String message = myView.getMessage();
+                myModel.addMessage(message);
                 myView.update();
             }
         };

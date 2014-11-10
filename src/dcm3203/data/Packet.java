@@ -10,14 +10,16 @@ import java.nio.ByteBuffer;
  And then just encode that object into a stream
  than it is to create packets individually by passing raw data.
  Something like:
- Packet packet = new Packet(packet_id);
+ Packet packet = new Packet(packet_id, data);
  client.writePacket(packet);
 
  Same way with reading Packets as well:
  Packet packet = client.readPacket();
  switch(packet.getId()) {
  case PACKET_ID0:
- //Handle packet 0
+ //Handle packet 0 (Handle a string)
+ case PACKET_ID1:
+ //Handle packet 1(Handle a file type)
  break;
 
  default:
