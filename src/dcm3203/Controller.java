@@ -10,6 +10,8 @@ import dcm3203.ui.View;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -205,11 +207,15 @@ public class Controller {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String message = myModel.getMyName();
-                message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
-                message += myView.getMessage();
-                myModel.addMessage(message);
-                myView.update(); 
+                String messageContents = myView.getMessage();
+
+                if(!messageContents.equals("")) {   // To prevent blank messages from being sent
+                    String message = myModel.getMyName();
+                    message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
+                    message += messageContents;
+                    myModel.addMessage(message);
+                    myView.update();
+                }
             }
         };
     }

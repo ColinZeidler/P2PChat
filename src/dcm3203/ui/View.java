@@ -87,6 +87,7 @@ public class View extends JFrame{
         sendButton.addActionListener(myController.getSendListener()); //Don't know if this is how it should be done
         this.add(sendButton, c);
 
+        this.getRootPane().setDefaultButton(sendButton);
         //TODO fix shit when resizing
         setVisible(true);
 
