@@ -175,7 +175,7 @@ public class Controller {
             public void actionPerformed(ActionEvent e) {
                 String message = myView.getMessage();
                 myModel.addMessage(message);
-                myView.update();
+                myView.update(); 
             }
         };
     }
