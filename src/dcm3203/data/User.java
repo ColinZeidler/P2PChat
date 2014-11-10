@@ -34,18 +34,7 @@ public class User {
         return name;
     }
 
-    private static String getCurrentTimeString() {
-        StringBuilder bldr = new StringBuilder("[");
-
-        bldr.append(new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));
-
-        return bldr.append("]").toString();
-    }
-    //This might be completely wrong and stupid
-    //Not tested
     public void sendText(String message) throws IOException {
-        String timestamp = User.getCurrentTimeString();
-        message = Model.getInstance().getMyName() + " " + timestamp + ": " + message + '\n';
         sendStream.writeInt(Model.textCode);
         sendStream.writeBytes(message);
     }

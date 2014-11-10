@@ -14,6 +14,8 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Vector;
 
 /**
@@ -203,7 +205,9 @@ public class Controller {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String message = myView.getMessage();
+                String message = myModel.getMyName();
+                message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
+                message += myView.getMessage();
                 myModel.addMessage(message);
                 myView.update(); 
             }
