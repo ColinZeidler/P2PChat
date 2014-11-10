@@ -41,7 +41,6 @@ public class View extends JFrame{
         //rows, columns, vertical gap, horizontal gap
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        //TODO add padding between all elements
 
         // add application menu
         menuBar = new JMenuBar();
