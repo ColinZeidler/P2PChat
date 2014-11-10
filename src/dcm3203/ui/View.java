@@ -93,6 +93,9 @@ public class View extends JFrame{
 
     }
 
+    public String getMessage(){
+        return messageBar.getText();
+    }
     public void update() {
         chatLog.setText(""); //clear the chat log
         for (String message: myModel.getMessageHistory())
