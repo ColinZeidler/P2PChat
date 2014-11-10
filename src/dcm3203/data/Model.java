@@ -7,9 +7,9 @@ import java.util.Vector;
  * Created by Colin on 2014-10-28.
  */
 public class Model {
-    private ArrayDeque<String> messageHistory;
+    private final ArrayDeque<String> messageHistory;
     private int maxMessages = 750;
-    private Vector<User> userList;
+    private final Vector<User> userList;
     private static Model instance;
     private String myName;
 
