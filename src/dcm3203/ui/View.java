@@ -79,7 +79,7 @@ public class View extends JFrame{
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+                System.exit(0); // TODO needs to clean up not proper exit
             }
         });
         menu.add(menuItem);
