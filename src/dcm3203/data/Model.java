@@ -30,11 +30,9 @@ public class Model {
     }
 
     public ArrayDeque<String> getMessageHistory() {
-        return messageHistory;
-    }
-
-    public void setMessageHistory(ArrayDeque<String> messageHistory) {
-        this.messageHistory = messageHistory;
+        synchronized (messageHistory) {
+            return messageHistory;
+        }
     }
 
     /**
@@ -42,25 +40,29 @@ public class Model {
      * @param message the message to add to the list
      */
     public void addMessage(String message) {
-        messageHistory.add(message);
-        if (messageHistory.size() > maxMessages)
-            messageHistory.remove();
+        synchronized (messageHistory) {
+            messageHistory.add(message);
+            if (messageHistory.size() > maxMessages)
+                messageHistory.remove();
+        }
     }
 
     public Vector<User> getUserList() {
-        return userList;
-    }
-
-    public void setUserList(Vector<User> userList) {
-        this.userList = userList;
+        synchronized (userList) {
+            return userList;
+        }
     }
 
     public void addUser(User user) {
-        this.userList.add(user);
+        synchronized (userList) {
+            this.userList.add(user);
+        }
     }
 
     public void removeUser(User user) {
-        this.userList.remove(user);
+        synchronized (userList) {
+            this.userList.remove(user);
+        }
     }
 
     public String getMyName() {
