@@ -1,6 +1,7 @@
 package dcm3203;
 
 import dcm3203.data.Model;
+import dcm3203.data.Packet;
 import dcm3203.data.User;
 import dcm3203.network.ConnectionServer;
 import dcm3203.network.UDPDiscoveryHandle;
@@ -9,10 +10,7 @@ import dcm3203.ui.View;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -69,9 +67,11 @@ public class Controller {
 
             Vector<User> newUsers = new Vector<User>(1);
             for (User user: myModel.getUserList()) {
-                BufferedReader fromUser = null;
+//                BufferedReader fromUser = null;
+                DataInputStream fromUser = null;
                 try {
-                     fromUser = new BufferedReader(new InputStreamReader(user.getConnection().getInputStream()));
+//                     fromUser = new BufferedReader(new InputStreamReader(user.getConnection().getInputStream()));
+                    fromUser = new DataInputStream(user.getConnection().getInputStream());
                 } catch (NullPointerException e) {
                     continue;
                 } catch (IOException e) {
@@ -80,13 +80,16 @@ public class Controller {
 
                 if (fromUser != null) {
                     try {
-                        switch (fromUser.read()) {
+                        Packet data = readPacket(fromUser);
+                        switch (data.getID()) {
                             case Model.textCode:
-                                myModel.addMessage(fromUser.readLine());
+                                String message = data.getData().toString();
+                                myModel.addMessage(message);
                                 myView.update();
                                 break;
                             case Model.connectCode:
-                                User temp = incomingConnect(fromUser);
+                                String host = data.getData().toString();
+                                User temp = incomingConnect(host);
                                 if (temp != null)
                                     newUsers.add(temp);
                                 for (User newUser: newUsers) {
@@ -151,13 +154,12 @@ public class Controller {
      * receives an IP address from a remote client,
      * and then connects to it, gets the new users name and creates a User object
      *
-     * @param fromUser the input stream from the User sending the message
+     * @param host the input stream from the User sending the message
      * @return The User that we just connected to
      * @throws IOException
      */
-    private User incomingConnect(BufferedReader fromUser) throws IOException{
+    private User incomingConnect(String host) throws IOException{
         User newUser = null;
-        String host = fromUser.readLine();
         Socket socket;
         try {
             socket = new Socket(host, connectionPort);
@@ -175,6 +177,26 @@ public class Controller {
         reader.close();
         newUser = new User(name, socket);
         return newUser;
+    }
+
+    /**
+     * Creates a Packet object from the incoming stream of data
+     * @param fromUser the data stream to receive from.
+     * @return Packet object containing all of the Data
+     * @throws IOException
+     */
+    private Packet readPacket(DataInputStream fromUser) throws IOException {
+        Packet packet = null;
+
+        int type = fromUser.readInt();
+        int bufferSize = fromUser.readInt();
+
+        byte[] bytes = new byte[bufferSize];
+
+        int result = fromUser.read(bytes);
+
+        packet = new Packet(type, bytes);
+        return packet;
     }
 
     public ActionListener getSendListener() {
