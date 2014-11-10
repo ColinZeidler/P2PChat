@@ -1,6 +1,7 @@
 package dcm3203.network;
 
 import dcm3203.data.Model;
+import dcm3203.data.Packet;
 import dcm3203.data.User;
 
 import java.io.*;
@@ -53,7 +54,9 @@ public class ConnectionServer implements Runnable{
                 if (newToTheRoom == 1) {
 //                    send.writeInt(myModel.getUserList().size());
                     for (User user : myModel.getUserList()) {
-                        user.sendConnect(newSocket.getInetAddress().getHostAddress());
+                        Packet data = new Packet(Model.connectCode,
+                                newSocket.getInetAddress().getHostAddress().getBytes());
+                        user.writePacket(data);
                     }
                 }
                 send.close();
