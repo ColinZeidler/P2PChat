@@ -20,6 +20,13 @@ import java.util.Vector;
 
 /**
  * Created by Colin on 2014-10-28.
+ *
+ * Main Control class
+ * handles the start of the program and the overall control flow,
+ *
+ * contains actionHandlers for the View class
+ *
+ * Updates the data Model, and then tells the View class to update
  */
 public class Controller {
     private View myView;
@@ -82,6 +89,10 @@ public class Controller {
                                 User temp = incomingConnect(fromUser);
                                 if (temp != null)
                                     newUsers.add(temp);
+                                for (User newUser: newUsers) {
+                                    myModel.addUser(newUser);
+                                }
+                                myView.update();
                                 break;
                             case Model.fileAdCode: break;
                             case Model.fileReqCode: break;
@@ -94,9 +105,6 @@ public class Controller {
                 }
             }
 
-            for (User newUser: newUsers) {
-                myModel.addUser(newUser);
-            }
             long endTime = System.currentTimeMillis();
             long diff = endTime - startTime;
 //            System.out.println(diff);
