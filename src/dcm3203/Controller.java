@@ -77,7 +77,7 @@ public class Controller {
                         continue;
                     switch (data.getID()) {
                         case Model.textCode:
-                            String message = data.getData().toString();
+                            String message = new String(data.getBytes());
                             myModel.addMessage(message);
                             myView.update();
                             break;
