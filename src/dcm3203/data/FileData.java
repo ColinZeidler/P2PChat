@@ -1,5 +1,7 @@
 package dcm3203.data;
 
+import java.io.File;
+
 /**
  * Created by Michael on 09/11/2014.
  *
@@ -10,11 +12,14 @@ package dcm3203.data;
  *
  *     Each user can have a list of files and there locations
  *
+ *     Only create a FileData object if you have the file OR you have a FileData string
+ *
  */
 public class FileData {
 
     private String  name;       //  The name of the file
     private String  location;   //  directory if have file, name if other user has file
+    private long    fileSize;   //  The size of the file
     private boolean have;       //  If the current user has the file, can match if name is the same somehow
 
     static private final String SPLIT_STR = "\n";
@@ -25,17 +30,20 @@ public class FileData {
     public FileData(String dataString) { setFromDataString(dataString); }
 
     /////
-    //   Assumed to have file if creating without FileData string
-    //
-    public FileData(String name, String location) { this(name, location, true); }
-
-    /////
     //   Constructor to set up each variable
     //
-    public FileData(String name, String location, boolean have) {
-        this.name = name;
-        this.location = location;
-        this.have = have;
+    public FileData(String name, String location) {
+        try {
+            File temp = new File(location);
+            if (!temp.exists()) throw new Exception("Not a valid path name");
+
+            this.name = name;
+            this.location = location;
+            this.fileSize = new File(location).length();
+            this.have = true;
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     /////
@@ -44,14 +52,18 @@ public class FileData {
     // users in the network (used if have file)
     //
     public String getSendDataString() {
-        return (name + SPLIT_STR + Model.getInstance().getMyName() + SPLIT_STR + String.valueOf(false));
+        if (have) {
+            return (name + SPLIT_STR + Model.getInstance().getMyName() + SPLIT_STR + fileSize + SPLIT_STR + String.valueOf(false));
+        } else {
+            return (getDataString());
+        }
     }
 
     /////
     //   Makes a FileData String without changing values for the string
     //
     public String getDataString() {
-        return (name + SPLIT_STR + location + SPLIT_STR + have);
+        return (name + SPLIT_STR + location + SPLIT_STR + fileSize + SPLIT_STR + have);
     }
 
     /////
@@ -61,14 +73,15 @@ public class FileData {
         String[] split = dataString.split(SPLIT_STR);
 
         try {
-            if(split.length != 3) throw new Exception("Improper FileData string given");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+            if(split.length != 4) throw new Exception("Improper FileData string given");
 
-        name = split[0];
-        location = split[1];
-        have = Boolean.valueOf(split[2]);
+            name = split[0];
+            location = split[1];
+            fileSize = Long.valueOf(split[2]);
+            have = Boolean.valueOf(split[3]);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 
 }

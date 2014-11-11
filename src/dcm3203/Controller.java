@@ -1,5 +1,6 @@
 package dcm3203;
 
+import dcm3203.data.FileData;
 import dcm3203.data.Model;
 import dcm3203.data.Packet;
 import dcm3203.data.User;
@@ -8,10 +9,9 @@ import dcm3203.network.UDPDiscoveryHandle;
 import dcm3203.ui.ConnectDialog;
 import dcm3203.ui.View;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -201,6 +201,45 @@ public class Controller {
 
         packet = new Packet(type, bytes);
         return packet;
+    }
+
+    public ActionListener getConnectDialogListener() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                myConnect.setVisible(true);
+            }
+        };
+    }
+
+    public ActionListener getExitListener() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0); // TODO needs to clean up, not proper exit
+            }
+        };
+    }
+
+    public ActionListener getFileListener() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JFileChooser fc = new JFileChooser();
+
+                int rVal = fc.showOpenDialog(myView);
+
+                if (rVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    FileData fileData = new FileData(file.getName(), file.getPath());
+
+                    System.out.println("My String: " + fileData.getDataString());
+                    System.out.println("Send String: " + fileData.getSendDataString());
+                } else {
+                    System.out.println("Cancelled open");
+                }
+            }
+        };
     }
 
     public ActionListener getSendListener() {
