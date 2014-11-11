@@ -46,12 +46,29 @@ public class User {
         return bldr.append("]").toString();
     }
 
+    /**
+     * writes the data for a packet object onto the Sockets outgoing stream
+     *
+     * Use:
+     * Packet packet = new Packet(Model.Code, message.getBytes());
+     * writePacket(packet);
+     *
+     * @param packet
+     * @throws IOException
+     */
     public void writePacket(Packet packet) throws IOException{
         //TEMP
         sendStream.writeInt(packet.getID());
-        sendStream.write(packet.getData().get());
+        sendStream.writeInt(packet.getData().array().length);
+        sendStream.write(packet.getData().array());
     }
 
+
+    /**
+     * Creates a Packet object from the incoming stream of data
+     * @return Packet object containing all of the Data
+     * @throws IOException
+     */
     public Packet readPacket() throws IOException{
             if(receiveStream.available() > 3) {
                 int sread = receiveStream.read();
@@ -72,32 +89,6 @@ public class User {
         }
         return null;
 
-    }
-
-    public void sendText(String message) throws IOException {
-        String timestamp = User.getCurrentTimeString();
-        message = Model.getInstance().getMyName() + " " + timestamp + ": " + message + '\n';
-        Packet packet = new Packet(0, message.getBytes());
-        writePacket(packet);
-    }
-
-    public void sendConnect(String address) throws IOException {
-        sendStream.writeInt(Model.connectCode);
-        sendStream.writeBytes(address + '\n');
-    }
-
-    public void sendFileAd(String filename) throws IOException {
-        sendStream.writeInt(Model.fileAdCode);
-        sendStream.writeBytes(filename + '\n');
-    }
-
-    public void sendFileRequest() throws IOException {
-        sendStream.writeInt(Model.fileReqCode);
-    }
-
-    public void sendFile() throws IOException {
-        //send filesize
-        //send file by reading in X bytes at once.
     }
 
     @Override
