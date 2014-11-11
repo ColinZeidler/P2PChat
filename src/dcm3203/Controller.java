@@ -71,45 +71,33 @@ public class Controller {
 
             Vector<User> newUsers = new Vector<User>(1);
             for (User user: myModel.getUserList()) {
-//                BufferedReader fromUser = null;
-                DataInputStream fromUser = null;
                 try {
-//                     fromUser = new BufferedReader(new InputStreamReader(user.getConnection().getInputStream()));
-                    fromUser = new DataInputStream(user.getConnection().getInputStream());
-                } catch (NullPointerException e) {
+                    Packet data = user.readPacket();
+                    switch (data.getID()) {
+                        case Model.textCode:
+                            String message = data.getData().toString();
+                            myModel.addMessage(message);
+                            myView.update();
+                            break;
+                        case Model.connectCode:
+                            String host = data.getData().toString();
+                            User temp = incomingConnect(host);
+                            if (temp != null)
+                                newUsers.add(temp);
+                            for (User newUser: newUsers) {
+                                myModel.addUser(newUser);
+                            }
+                            myView.update();
+                            break;
+                        case Model.fileAdCode: break;
+                        case Model.fileReqCode: break;
+                    }
+                } catch (SocketTimeoutException e) { //Socket will timeout if there is no data to receive
                     continue;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-                if (fromUser != null) {
-                    try {
-                        Packet data = readPacket(fromUser);
-                        switch (data.getID()) {
-                            case Model.textCode:
-                                String message = data.getData().toString();
-                                myModel.addMessage(message);
-                                myView.update();
-                                break;
-                            case Model.connectCode:
-                                String host = data.getData().toString();
-                                User temp = incomingConnect(host);
-                                if (temp != null)
-                                    newUsers.add(temp);
-                                for (User newUser: newUsers) {
-                                    myModel.addUser(newUser);
-                                }
-                                myView.update();
-                                break;
-                            case Model.fileAdCode: break;
-                            case Model.fileReqCode: break;
-                        }
-                    } catch (SocketTimeoutException e) { //Socket will timeout if there is no data to receive
-                        continue;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
 
             long endTime = System.currentTimeMillis();
@@ -181,26 +169,6 @@ public class Controller {
         reader.close();
         newUser = new User(name, socket);
         return newUser;
-    }
-
-    /**
-     * Creates a Packet object from the incoming stream of data
-     * @param fromUser the data stream to receive from.
-     * @return Packet object containing all of the Data
-     * @throws IOException
-     */
-    private Packet readPacket(DataInputStream fromUser) throws IOException {
-        Packet packet = null;
-
-        int type = fromUser.readInt();
-        int bufferSize = fromUser.readInt();
-
-        byte[] bytes = new byte[bufferSize];
-
-        int result = fromUser.read(bytes);
-
-        packet = new Packet(type, bytes);
-        return packet;
     }
 
     public ActionListener getConnectDialogListener() {
