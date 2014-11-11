@@ -163,11 +163,9 @@ public class Controller {
         //Send data to the new guy
         sender.writeInt(0);     //Tell the client not to have everyone else connect to me
         sender.writeBytes(myModel.getMyName() + '\n');
-        sender.close();
         //receive from the new guy
         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         String name = reader.readLine();
-        reader.close();
         newUser = new User(name, socket);
         return newUser;
     }
