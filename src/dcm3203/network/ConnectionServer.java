@@ -42,12 +42,10 @@ public class ConnectionServer implements Runnable{
             while (true) {
                 Socket newSocket = socket.accept();
                 //get name from newSocket
-                newSocket.setSoTimeout(1);
 
                 BufferedReader incoming = new BufferedReader(new InputStreamReader(newSocket.getInputStream()));
                 int newToTheRoom = incoming.read(); //get the status int, from person connecting
                 String name = incoming.readLine();
-                incoming.close();
                 DataOutputStream send = new DataOutputStream(newSocket.getOutputStream());
                 send.writeBytes(myModel.getMyName() + '\n');
 
@@ -59,9 +57,9 @@ public class ConnectionServer implements Runnable{
                         user.writePacket(data);
                     }
                 }
-                send.close();
 
                 //add user to user list
+                newSocket.setSoTimeout(1);
                 myModel.addUser(new User(name, newSocket));
             }
         } catch (IOException e) {

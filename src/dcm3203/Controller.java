@@ -73,6 +73,8 @@ public class Controller {
             for (User user: myModel.getUserList()) {
                 try {
                     Packet data = user.readPacket();
+                    if (data == null)
+                        continue;
                     switch (data.getID()) {
                         case Model.textCode:
                             String message = data.getData().toString();
@@ -92,8 +94,6 @@ public class Controller {
                         case Model.fileAdCode: break;
                         case Model.fileReqCode: break;
                     }
-                } catch (SocketTimeoutException e) { //Socket will timeout if there is no data to receive
-                    continue;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -123,21 +123,29 @@ public class Controller {
     public boolean setupConnection(String ip) throws IOException{
         Socket newSocket;
 
+        System.out.println("Connecting to remote user");
         try {
             newSocket = new Socket(ip, connectionPort);
         } catch (UnknownHostException e) {
             return (false);
         }
 
+        System.out.println("Opening output stream");
         DataOutputStream send = new DataOutputStream(newSocket.getOutputStream());
+        System.out.println("Sending new to room int");
         send.writeInt(1);
-        send.close();
+        System.out.println("Sending name");
+        send.writeBytes(myModel.getMyName() + '\n');
+        System.out.println("opening input stream");
         BufferedReader incoming = new BufferedReader(new InputStreamReader(newSocket.getInputStream()));
 
+        System.out.println("Receiving remote Name");
         String name = incoming.readLine();
-        incoming.close();
+        System.out.println("Setting timeout");
+        newSocket.setSoTimeout(1);
+        System.out.println("Adding to user list");
         Model.getInstance().addUser(new User(name, newSocket));
-
+        System.out.println("Done");
         return(true);
     }
 
