@@ -123,29 +123,22 @@ public class Controller {
     public boolean setupConnection(String ip) throws IOException{
         Socket newSocket;
 
-        System.out.println("Connecting to remote user");
         try {
             newSocket = new Socket(ip, connectionPort);
         } catch (UnknownHostException e) {
             return (false);
+        } catch (SocketTimeoutException e) {
+            return (false);
         }
 
-        System.out.println("Opening output stream");
         DataOutputStream send = new DataOutputStream(newSocket.getOutputStream());
-        System.out.println("Sending new to room int");
         send.writeInt(1);
-        System.out.println("Sending name");
         send.writeBytes(myModel.getMyName() + '\n');
-        System.out.println("opening input stream");
         BufferedReader incoming = new BufferedReader(new InputStreamReader(newSocket.getInputStream()));
 
-        System.out.println("Receiving remote Name");
         String name = incoming.readLine();
-        System.out.println("Setting timeout");
         newSocket.setSoTimeout(1);
-        System.out.println("Adding to user list");
-        Model.getInstance().addUser(new User(name, newSocket));
-        System.out.println("Done");
+        Model.getInstance().addUser(new User(name.trim(), newSocket));
         return(true);
     }
 

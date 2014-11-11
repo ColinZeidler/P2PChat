@@ -60,7 +60,7 @@ public class ConnectionServer implements Runnable{
 
                 //add user to user list
                 newSocket.setSoTimeout(1);
-                myModel.addUser(new User(name, newSocket));
+                myModel.addUser(new User(name.trim(), newSocket));
             }
         } catch (IOException e) {
             e.printStackTrace();
