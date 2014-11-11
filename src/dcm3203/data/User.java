@@ -38,14 +38,6 @@ public class User {
         return name;
     }
 
-    private static String getCurrentTimeString() {
-        StringBuilder bldr = new StringBuilder("[");
-
-        bldr.append(new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));
-
-        return bldr.append("]").toString();
-    }
-
     /**
      * writes the data for a packet object onto the Sockets outgoing stream
      *
@@ -53,16 +45,15 @@ public class User {
      * Packet packet = new Packet(Model.Code, message.getBytes());
      * writePacket(packet);
      *
-     * @param packet
+     * @param packet the packet object to send.
      * @throws IOException
      */
     public void writePacket(Packet packet) throws IOException{
         //TEMP
         sendStream.writeInt(packet.getID());
-        sendStream.writeInt(packet.getData().array().length);
-        sendStream.write(packet.getData().array());
+        sendStream.writeInt(packet.getData().capacity());
+        sendStream.write(packet.getBytes());
     }
-
 
     /**
      * Creates a Packet object from the incoming stream of data
