@@ -52,7 +52,11 @@ public class FileData {
     // users in the network (used if have file)
     //
     public String getSendDataString() {
-        return (name + SPLIT_STR + Model.getInstance().getMyName() + SPLIT_STR + fileSize + SPLIT_STR + String.valueOf(false));
+        if (have) {
+            return (name + SPLIT_STR + Model.getInstance().getMyName() + SPLIT_STR + fileSize + SPLIT_STR + String.valueOf(false));
+        } else {
+            return (getDataString());
+        }
     }
 
     /////
