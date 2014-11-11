@@ -47,4 +47,9 @@ public class Packet {
 
     public int getID(){return ID;}
     public ByteBuffer getData(){return data.asReadOnlyBuffer();} //contents of the buffer cannot be changed
+    public byte[] getBytes() {
+        byte[] bytes = new byte[data.capacity()];
+        data.get(bytes);
+        return bytes;
+    }
 }
