@@ -201,6 +201,24 @@ public class Controller {
         return packet;
     }
 
+    public ActionListener getConnectDialogListener() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                myConnect.setVisible(true);
+            }
+        };
+    }
+
+    public ActionListener getExitListener() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0); // TODO needs to clean up, not proper exit
+            }
+        };
+    }
+
     public ActionListener getSendListener() {
         return new ActionListener() {
             @Override

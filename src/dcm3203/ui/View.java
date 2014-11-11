@@ -59,6 +59,7 @@ public class View extends JFrame{
                 KeyEvent.VK_N, InputEvent.ALT_MASK));
         menuItem.getAccessibleContext().setAccessibleDescription(
                 "Brings the connection dialog back up to connect to a new room");
+        menuItem.addActionListener(myController.getConnectDialogListener());
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Advertise File",
@@ -76,12 +77,7 @@ public class View extends JFrame{
                 KeyEvent.VK_F4, InputEvent.ALT_MASK));
         menuItem.getAccessibleContext().setAccessibleDescription(
                 "Quit the application");
-        menuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0); // TODO needs to clean up not proper exit
-            }
-        });
+        menuItem.addActionListener(myController.getExitListener());
         menu.add(menuItem);
 
         // add chat log
