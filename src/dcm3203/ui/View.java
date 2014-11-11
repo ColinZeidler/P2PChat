@@ -68,6 +68,7 @@ public class View extends JFrame{
                 KeyEvent.VK_A, InputEvent.ALT_MASK));
         menuItem.getAccessibleContext().setAccessibleDescription(
                 "Advertises file to other users to download");
+        menuItem.addActionListener(myController.getFileListener());
         menu.add(menuItem);
 
         menu.addSeparator();
