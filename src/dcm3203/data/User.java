@@ -61,14 +61,14 @@ public class User {
      * @throws IOException
      */
     public Packet readPacket() throws IOException{
-            if(receiveStream.available() > 3) {
-                int sread = receiveStream.read();
-                if(sread == -1) {
-                    //End of file. PANIC!
-                }
-                byte id = (byte) sread;
-                int size = (receiveStream.read() << 8) | receiveStream.read();
-                byte[] data = new byte[size];
+        if(receiveStream.available() > 3) {
+            int sread = receiveStream.read();
+            if(sread == -1) {
+                //End of file. PANIC!
+            }
+            byte id = (byte) sread;
+            int size = (receiveStream.read() << 8) | receiveStream.read();
+            byte[] data = new byte[size];
 
             int off = 0;
             while(off != size) {
