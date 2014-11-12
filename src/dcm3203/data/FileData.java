@@ -22,7 +22,9 @@ public class FileData {
     private long    fileSize;   //  The size of the file
     private boolean have;       //  If the current user has the file, can match if name is the same somehow
 
-    static private final String SPLIT_STR = "\n";
+    private boolean valid;      //  Makes sure that the data is not incomplete or invalid
+
+    static public final String SPLIT_STR = "\n";
 
     /////
     //   Sets up the class from a FileData in String format
@@ -41,10 +43,23 @@ public class FileData {
             this.location = location;
             this.fileSize = new File(location).length();
             this.have = true;
+            valid = true;
         } catch (Exception e) {
+            valid = false;
             System.err.println(e.getMessage());
         }
     }
+
+    /////
+    //   Makes a FileData String without changing values for the string
+    //
+    public String getDataString() {
+        return (name + SPLIT_STR + location + SPLIT_STR + fileSize + SPLIT_STR + have);
+    }
+
+    public String getFileLocation() { return (location); }
+    public String getFileName()     { return (name); }
+    public long   getFileSize()     { return (fileSize); }
 
     /////
     //   Used to get the string that would be sent to other users on the network
@@ -59,12 +74,12 @@ public class FileData {
         }
     }
 
+    public boolean isHave() { return (have); }
+
     /////
-    //   Makes a FileData String without changing values for the string
+    //   Is used to see if the data is correct or valid, properly set up (prevent sending faulty info
     //
-    public String getDataString() {
-        return (name + SPLIT_STR + location + SPLIT_STR + fileSize + SPLIT_STR + have);
-    }
+    public boolean isValid() { return (valid); }
 
     /////
     //   Gets data from a FileData string
@@ -79,7 +94,10 @@ public class FileData {
             location = split[1];
             fileSize = Long.valueOf(split[2]);
             have = Boolean.valueOf(split[3]);
+
+            valid = true;
         } catch (Exception e) {
+            valid = false;
             System.err.println(e.getMessage());
         }
     }
