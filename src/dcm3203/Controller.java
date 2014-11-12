@@ -87,10 +87,6 @@ public class Controller {
                             User temp = incomingConnect(host);
                             if (temp != null)
                                 newUsers.add(temp);
-                            for (User newUser: newUsers) {
-                                myModel.addUser(newUser);
-                            }
-                            myView.update();
                             break;
                         case Model.fileAdCode: break;
                         case Model.fileReqCode: break;
@@ -100,6 +96,10 @@ public class Controller {
                 }
 
             }
+            for (User newUser: newUsers) {
+                myModel.addUser(newUser);
+            }
+            myView.update();
 
             long endTime = System.currentTimeMillis();
             long diff = endTime - startTime;
