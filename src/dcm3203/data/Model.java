@@ -1,6 +1,8 @@
 package dcm3203.data;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -12,6 +14,7 @@ public class Model {
     private final Vector<User> userList;
     private static Model instance;
     private String myName;
+    private FileList filesAvailable;
 
     public static final int textCode = 0;
     public static final int connectCode = 3;
@@ -21,6 +24,7 @@ public class Model {
     public Model() {
         messageHistory = new ArrayDeque<String>();
         userList = new Vector<User>();
+        filesAvailable = new FileList();
     }
 
     public static Model getInstance() {
