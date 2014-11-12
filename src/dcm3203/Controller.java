@@ -59,8 +59,6 @@ public class Controller {
 
         myConnect.setVisible(true);
 
-        System.out.println("TEST BY MOOP"); // TODO get rid jsut to show
-
         // spin off new Thread for incoming connection handling (just a shell right now)
         Thread inConnect = new Thread(new ConnectionServer(connectionPort));
         inConnect.start();
@@ -88,7 +86,20 @@ public class Controller {
                             if (temp != null)
                                 newUsers.add(temp);
                             break;
-                        case Model.fileAdCode: break;
+                        case Model.fileAdCode:
+                            String fileInfo = new String(data.getBytes());
+                            String senderInfo = fileInfo.substring(0, fileInfo.indexOf(FileData.SPLIT_STR));
+                            fileInfo = fileInfo.substring(fileInfo.indexOf("\n") + 1, fileInfo.length());
+                            FileData newAdFile = new FileData(fileInfo);
+
+                            if (newAdFile.isValid()) {
+                                myModel.addMessage(senderInfo + " File advertisement: " + newAdFile.getFileName());
+                            } else {
+                                myModel.addMessage(senderInfo + " Failed to advertise file!");
+                            }
+                            System.out.println(fileInfo);
+                            System.out.println(senderInfo);
+                            break;
                         case Model.fileReqCode: break;
                     }
                 } catch (IOException e) {
@@ -207,8 +218,29 @@ public class Controller {
                     File file = fc.getSelectedFile();
                     FileData fileData = new FileData(file.getName(), file.getPath());
 
-                    System.out.println("My String: " + fileData.getDataString());
-                    System.out.println("Send String: " + fileData.getSendDataString());
+                    if (fileData.isValid()) {
+                        // TODO save file in list of available files
+                        // Model.getInstance().addAdvertisedFile(fileData);
+
+                        // Sends the file advertisement
+
+                        String message = myModel.getMyName();
+                        message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
+
+                        myModel.addMessage(message + " Advertised: " + fileData.getFileName());
+
+                        message += "\n" + fileData.getSendDataString();
+
+                        Packet packet = new Packet(Model.fileAdCode, message.getBytes());
+                        for (User user: myModel.getUserList()) {
+                            try {
+                                user.writePacket(packet);
+                            } catch (IOException err) {}
+                        }
+                    } else {
+                        // file is not valid?
+                        System.out.println("File is not valid!");
+                    }
                 } else {
                     System.out.println("Cancelled open");
                 }
