@@ -61,13 +61,14 @@ public class User {
      * @throws IOException
      */
     public Packet readPacket() throws IOException{
-        connection.setSoTimeout(0);
         if(receiveStream.available() > 3) {
             int id = receiveStream.readInt();
+            System.out.println(id);
 //            if(id == -1) {
 //                //End of file. PANIC!
 //            }
             int size = receiveStream.readInt();
+            System.out.println(size);
             byte[] data = new byte[size];
 
             int off = 0;
@@ -75,11 +76,9 @@ public class User {
                 int read = receiveStream.read(data, off, size - off);
                 off += read;
             }
-            connection.setSoTimeout(1);
 
             return new Packet(id, data);
         }
-        connection.setSoTimeout(1);
         return null;
 
     }

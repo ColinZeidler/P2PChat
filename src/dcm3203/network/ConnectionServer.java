@@ -44,7 +44,10 @@ public class ConnectionServer implements Runnable{
                 //get name from newSocket
 
                 BufferedReader incoming = new BufferedReader(new InputStreamReader(newSocket.getInputStream()));
-                int newToTheRoom = incoming.read(); //get the status int, from person connecting
+                String da = incoming.readLine();
+                System.out.println(da);
+                int newToTheRoom = Integer.parseInt(da); //get the status int, from person connecting
+                System.out.println(newToTheRoom);
                 String name = incoming.readLine();
                 DataOutputStream send = new DataOutputStream(newSocket.getOutputStream());
                 send.writeBytes(myModel.getMyName() + '\n');
@@ -52,6 +55,7 @@ public class ConnectionServer implements Runnable{
                 if (newToTheRoom == 1) {
 //                    send.writeInt(myModel.getUserList().size());
                     for (User user : myModel.getUserList()) {
+                        System.out.println("telling " + user.getName() + "to connect to new guy");
                         Packet data = new Packet(Model.connectCode,
                                 newSocket.getInetAddress().getHostAddress().getBytes());
                         user.writePacket(data);
@@ -59,7 +63,6 @@ public class ConnectionServer implements Runnable{
                 }
 
                 //add user to user list
-                newSocket.setSoTimeout(1);
                 myModel.addUser(new User(name.trim(), newSocket));
             }
         } catch (IOException e) {

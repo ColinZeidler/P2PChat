@@ -82,7 +82,8 @@ public class Controller {
                             myView.update();
                             break;
                         case Model.connectCode:
-                            String host = data.getData().toString();
+                            System.out.println("I am in the ConnectCode");
+                            String host = new String(data.getBytes()).trim();
                             User temp = incomingConnect(host);
                             if (temp != null)
                                 newUsers.add(temp);
@@ -132,12 +133,11 @@ public class Controller {
         }
 
         DataOutputStream send = new DataOutputStream(newSocket.getOutputStream());
-        send.writeInt(1);
+        send.writeBytes("1\n");
         send.writeBytes(myModel.getMyName() + '\n');
         BufferedReader incoming = new BufferedReader(new InputStreamReader(newSocket.getInputStream()));
 
         String name = incoming.readLine();
-        newSocket.setSoTimeout(1);
         Model.getInstance().addUser(new User(name.trim(), newSocket));
         return(true);
     }
@@ -152,16 +152,23 @@ public class Controller {
      * @throws IOException
      */
     private User incomingConnect(String host) throws IOException{
+        System.out.println(host);
         User newUser = null;
         Socket socket;
         try {
             socket = new Socket(host, connectionPort);
         } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return null;
+        } catch (SocketTimeoutException e) {
+            e.printStackTrace();
             return null;
         }
         DataOutputStream sender = new DataOutputStream(socket.getOutputStream());
         //Send data to the new guy
-        sender.writeInt(0);     //Tell the client not to have everyone else connect to me
+        System.out.println("Sending data to new guy");
+        sender.writeBytes("0\n");     //Tell the client not to have everyone else connect to me
+        System.out.println("Sending name to new guy");
         sender.writeBytes(myModel.getMyName() + '\n');
         //receive from the new guy
         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
