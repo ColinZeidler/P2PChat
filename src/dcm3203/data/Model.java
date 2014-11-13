@@ -18,6 +18,7 @@ public class Model {
     public static final int connectCode = 3;
     public static final int fileAdCode = 1;
     public static final int fileReqCode = 2;
+    public static final int fileRemoveCode = 4;
 
     public Model() {
         messageHistory = new ArrayDeque<String>();

@@ -101,6 +101,22 @@ public class Controller {
                             System.out.println(myModel.printFiles());
                             break;
                         case Model.fileReqCode: break;
+                        case Model.fileRemoveCode:
+                            String remInfo = new String(data.getBytes());
+                            String removerInfo = remInfo.substring(0, remInfo.indexOf(FileData.SPLIT_STR));
+                            remInfo = remInfo.substring(remInfo.indexOf("\n") + 1, remInfo.length());
+                            FileData removeFile = new FileData(remInfo);
+
+                            if (removeFile.isValid()) {
+                                if (myModel.removeFile(removeFile)) {
+                                    myModel.addMessage(removerInfo + " File no longer advertised: " + removeFile.getFileName());
+                                } else {
+                                    myModel.addMessage(removerInfo + " Failed to remove advertisement on file!");
+                                }
+                            } else {
+                                myModel.addMessage(removerInfo + " Failed to remove advertisement on file!");
+                            }
+                            break;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
