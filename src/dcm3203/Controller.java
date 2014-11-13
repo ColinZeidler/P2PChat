@@ -135,7 +135,7 @@ public class Controller {
                 try {
                     Thread.sleep(loopPauseTime - diff);
                 } catch (InterruptedException e) {
-                    //do nothing
+                    e.printStackTrace();
                 }
             }
         }
@@ -154,8 +154,10 @@ public class Controller {
         try {
             newSocket = new Socket(ip, connectionPort);
         } catch (UnknownHostException e) {
+            e.printStackTrace();
             return (false);
         } catch (SocketTimeoutException e) {
+            e.printStackTrace();
             return (false);
         }
 
@@ -251,7 +253,9 @@ public class Controller {
                         for (User user: myModel.getUserList()) {
                             try {
                                 user.writePacket(packet);
-                            } catch (IOException err) {}
+                            } catch (IOException err) {
+                                err.printStackTrace();
+                            }
                         }
                     } else {
                         // file is not valid?
@@ -278,7 +282,9 @@ public class Controller {
                     for (User user: myModel.getUserList()) {
                         try {
                             user.writePacket(packet);
-                        } catch (IOException error) {}
+                        } catch (IOException error) {
+                            error.printStackTrace();
+                        }
                     }
                     myModel.addMessage(message);
                     myView.update();
