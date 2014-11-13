@@ -94,11 +94,11 @@ public class Controller {
 
                             if (newAdFile.isValid()) {
                                 myModel.addMessage(senderInfo + " File advertisement: " + newAdFile.getFileName());
+                                myModel.addFile(newAdFile);
                             } else {
                                 myModel.addMessage(senderInfo + " Failed to advertise file!");
                             }
-                            System.out.println(fileInfo);
-                            System.out.println(senderInfo);
+                            System.out.println(myModel.printFiles());
                             break;
                         case Model.fileReqCode: break;
                     }
@@ -219,8 +219,8 @@ public class Controller {
                     FileData fileData = new FileData(file.getName(), file.getPath());
 
                     if (fileData.isValid()) {
-                        // TODO save file in list of available files
-                        // Model.getInstance().addAdvertisedFile(fileData);
+                        Model.getInstance().addFile(fileData);
+                        System.out.println(myModel.printFiles());
 
                         // Sends the file advertisement
 
