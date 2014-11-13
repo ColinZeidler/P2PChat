@@ -18,6 +18,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Vector;
 
@@ -37,6 +38,7 @@ public class Controller {
     private ConnectDialog myConnect;
     private final int connectionPort = 60023, udpPort = 60022;
     private final long loopPauseTime = 25;  //number of milliseconds to sleep for in each loop
+    final String resetError = "connection reset";
     /**
      * Entry method
      * @param args command line args, ignored
@@ -284,17 +286,34 @@ public class Controller {
                     message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
                     message += messageContents;
                     Packet packet = new Packet(Model.textCode, message);
+
+                    ArrayList<User> deadUsers = new ArrayList<User>();
                     for (User user: myModel.getUserList()) {
                         try {
                             user.writePacket(packet);
+                        } catch(SocketException error) {
+//                            error.printStackTrace();
+                            System.out.println(error.getMessage());
+                            if (error.getMessage().toLowerCase().contains(resetError))
+                                deadUsers.add(user);
                         } catch (IOException error) {
                             error.printStackTrace();
                         }
+                    }
+
+                    for (User user: deadUsers) {
+                        handleConnectionReset(user);
                     }
                     myModel.addMessage(message);
                     myView.update();
                 }
             }
         };
+    }
+
+    private void handleConnectionReset(User user) {
+        myModel.addMessage(user.getName() + " has disconnected");
+        myModel.removeUser(user);
+        myView.update();
     }
 }
