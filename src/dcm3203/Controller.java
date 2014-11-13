@@ -249,7 +249,7 @@ public class Controller {
 
                         message += "\n" + fileData.getSendDataString();
 
-                        Packet packet = new Packet(Model.fileAdCode, message.getBytes());
+                        Packet packet = new Packet(Model.fileAdCode, message);
                         for (User user: myModel.getUserList()) {
                             try {
                                 user.writePacket(packet);
@@ -278,7 +278,7 @@ public class Controller {
                     String message = myModel.getMyName();
                     message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
                     message += messageContents;
-                    Packet packet = new Packet(Model.textCode, message.getBytes());
+                    Packet packet = new Packet(Model.textCode, message);
                     for (User user: myModel.getUserList()) {
                         try {
                             user.writePacket(packet);

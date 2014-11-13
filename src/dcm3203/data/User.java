@@ -51,7 +51,7 @@ public class User {
     public void writePacket(Packet packet) throws IOException{
         //TEMP
         sendStream.writeInt(packet.getID());
-        sendStream.writeInt(packet.getData().capacity());
+        sendStream.writeInt(packet.getDataLength());
         sendStream.write(packet.getBytes());
     }
 
