@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
@@ -117,7 +118,11 @@ public class Controller {
                                 myModel.addMessage(removerInfo + " Failed to remove advertisement on file!");
                             }
                             break;
+                        case Model.disconnectCode: break;
                     }
+                } catch(SocketException e){
+                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
