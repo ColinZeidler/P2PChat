@@ -88,6 +88,7 @@ public class Controller {
                             User temp = incomingConnect(host);
                             if (temp != null)
                                 newUsers.add(temp);
+                            myView.update();
                             break;
                         case Model.fileAdCode:
                             String fileInfo = new String(data.getBytes());
@@ -102,6 +103,7 @@ public class Controller {
                                 myModel.addMessage(senderInfo + " Failed to advertise file!");
                             }
                             System.out.println(myModel.printFiles());
+                            myView.update();
                             break;
                         case Model.fileReqCode: break;
                         case Model.fileRemoveCode:
@@ -119,6 +121,7 @@ public class Controller {
                             } else {
                                 myModel.addMessage(removerInfo + " Failed to remove advertisement on file!");
                             }
+                            myView.update();
                             break;
                         case Model.disconnectCode: break;
                     }
@@ -132,8 +135,8 @@ public class Controller {
             }
             for (User newUser: newUsers) {
                 myModel.addUser(newUser);
+                myView.update();
             }
-            myView.update();
 
             long endTime = System.currentTimeMillis();
             long diff = endTime - startTime;
