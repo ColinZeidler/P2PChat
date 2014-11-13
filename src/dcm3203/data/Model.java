@@ -1,8 +1,6 @@
 package dcm3203.data;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -65,8 +63,49 @@ public class Model {
 
     public void removeUser(User user) {
         synchronized (userList) {
+            removeUserFiles(user);
             this.userList.remove(user);
         }
+    }
+
+    public boolean addFile(String fileDataString) {
+        return (addFile(new FileData(fileDataString)));
+    }
+
+    public boolean addFile(FileData fileData) {
+        if (fileData.isHave()) {
+            this.filesAvailable.addToMyList(fileData);
+        } else {
+            synchronized (userList) {
+                for (User user : userList) {
+                    if (user.getName().equals(fileData.getFileLocation())) {
+                        this.filesAvailable.add(user, fileData);
+                        return (true);
+                    }
+                }
+            }
+        }
+        return (false);
+    }
+
+    public boolean removeFile(String fileDataString) {
+        return (removeFile(new FileData(fileDataString)));
+    }
+
+    public boolean removeFile(FileData fileData) {
+        if (fileData.isHave()) {
+            return(this.filesAvailable.removeFromMyList(fileData));
+        } else {
+            return(this.filesAvailable.remove(fileData));
+        }
+    }
+
+    public boolean removeUserFiles(User user) {
+        return(this.filesAvailable.remove(user));
+    }
+
+    public String printFiles() {
+        return (filesAvailable.toString());
     }
 
     public String getMyName() {
