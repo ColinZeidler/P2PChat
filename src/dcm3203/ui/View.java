@@ -84,8 +84,11 @@ public class View extends JFrame{
         // add chat log
         chatLog = new JTextArea(30, 40);
         chatLog.setEditable(false);
+        chatLog.setLineWrap(true);
+        chatLog.setWrapStyleWord(true);
         JScrollPane chatScrollPane = new JScrollPane(chatLog);
         c.fill = GridBagConstraints.HORIZONTAL;
+        chatScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         c.gridx = 0;
         c.gridy = 0;
         c.weightx = 0.9;
