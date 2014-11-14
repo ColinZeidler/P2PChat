@@ -62,6 +62,7 @@ public class View extends JFrame{
         menuItem.addActionListener(myController.getConnectDialogListener());
         menu.add(menuItem);
 
+        menu.addSeparator();
         menuItem = new JMenuItem("Advertise File",
                 KeyEvent.VK_A);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(
@@ -69,6 +70,15 @@ public class View extends JFrame{
         menuItem.getAccessibleContext().setAccessibleDescription(
                 "Advertises file to other users to download");
         menuItem.addActionListener(myController.getFileListener());
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Remove Advertisement",
+                KeyEvent.VK_R);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_R, InputEvent.ALT_MASK));
+        menuItem.getAccessibleContext().setAccessibleDescription(
+                "Remove advertisement on one of your files");
+        menuItem.addActionListener(myController.getRemoveFileListener());
         menu.add(menuItem);
 
         menu.addSeparator();

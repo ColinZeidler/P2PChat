@@ -7,6 +7,7 @@ import dcm3203.data.User;
 import dcm3203.network.ConnectionServer;
 import dcm3203.network.UDPDiscoveryHandle;
 import dcm3203.ui.ConnectDialog;
+import dcm3203.ui.RemoveFileDialog;
 import dcm3203.ui.View;
 
 import javax.swing.*;
@@ -274,6 +275,18 @@ public class Controller {
                 } else {
                     System.out.println("Cancelled open");
                 }
+            }
+        };
+    }
+
+    public ActionListener getRemoveFileListener() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                RemoveFileDialog removeFileDialog = new RemoveFileDialog(myView, "Remove advertisement",
+                        true, myModel.getFilesAvailable().localFiles());
+
+
             }
         };
     }

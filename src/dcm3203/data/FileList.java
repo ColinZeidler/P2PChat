@@ -109,17 +109,9 @@ public class FileList {
     }
 
     /////
-    //   Gives an array containing the names of local files
+    //   Gives an vector containing the names of local files
     //
-    public synchronized String[] localFiles() {
-        String[] fileNames = new String[myFiles.size()];
-
-        for (int i=0;i<myFiles.size();++i) {
-            fileNames[i] = myFiles.get(i).getFileName();
-        }
-
-        return (fileNames);
-    }
+    public synchronized Vector<FileData> localFiles() { return (myFiles); }
 
     /////
     //   Returns a text list of the files advertised, both that the user is advertising and that

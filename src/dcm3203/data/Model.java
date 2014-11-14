@@ -77,6 +77,8 @@ public class Model {
         }
     }
 
+    public FileList getFilesAvailable() { return (filesAvailable); }
+
     public boolean addFile(String fileDataString) {
         return (addFile(new FileData(fileDataString)));
     }
