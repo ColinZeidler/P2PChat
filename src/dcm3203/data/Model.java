@@ -1,5 +1,6 @@
 package dcm3203.data;
 
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Vector;
 
@@ -16,6 +17,7 @@ public class Model {
 
     public static final int textCode = 0;
     public static final int connectCode = 3;
+    public static final int disconnectCode = 5;
     public static final int fileAdCode = 1;
     public static final int fileReqCode = 2;
     public static final int fileRemoveCode = 4;
@@ -65,6 +67,12 @@ public class Model {
     public void removeUser(User user) {
         synchronized (userList) {
             removeUserFiles(user);
+            try {
+                user.getConnection().close();
+            } catch (IOException e) {
+//                e.printStackTrace();
+                System.out.println("unable to gracefully close socket");
+            }
             this.userList.remove(user);
         }
     }

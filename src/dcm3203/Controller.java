@@ -14,9 +14,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Vector;
 
@@ -36,6 +38,7 @@ public class Controller {
     private ConnectDialog myConnect;
     private final int connectionPort = 60023, udpPort = 60022;
     private final long loopPauseTime = 25;  //number of milliseconds to sleep for in each loop
+    final String resetError = "connection reset";
     /**
      * Entry method
      * @param args command line args, ignored
@@ -85,6 +88,7 @@ public class Controller {
                             User temp = incomingConnect(host);
                             if (temp != null)
                                 newUsers.add(temp);
+                            myView.update();
                             break;
                         case Model.fileAdCode:
                             String fileInfo = new String(data.getBytes());
@@ -99,6 +103,7 @@ public class Controller {
                                 myModel.addMessage(senderInfo + " Failed to advertise file!");
                             }
                             System.out.println(myModel.printFiles());
+                            myView.update();
                             break;
                         case Model.fileReqCode: break;
                         case Model.fileRemoveCode:
@@ -116,8 +121,13 @@ public class Controller {
                             } else {
                                 myModel.addMessage(removerInfo + " Failed to remove advertisement on file!");
                             }
+                            myView.update();
                             break;
+                        case Model.disconnectCode: break;
                     }
+                } catch(SocketException e){
+                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -125,8 +135,8 @@ public class Controller {
             }
             for (User newUser: newUsers) {
                 myModel.addUser(newUser);
+                myView.update();
             }
-            myView.update();
 
             long endTime = System.currentTimeMillis();
             long diff = endTime - startTime;
@@ -135,7 +145,7 @@ public class Controller {
                 try {
                     Thread.sleep(loopPauseTime - diff);
                 } catch (InterruptedException e) {
-                    //do nothing
+                    e.printStackTrace();
                 }
             }
         }
@@ -154,8 +164,10 @@ public class Controller {
         try {
             newSocket = new Socket(ip, connectionPort);
         } catch (UnknownHostException e) {
+            e.printStackTrace();
             return (false);
         } catch (SocketTimeoutException e) {
+            e.printStackTrace();
             return (false);
         }
 
@@ -247,11 +259,13 @@ public class Controller {
 
                         message += "\n" + fileData.getSendDataString();
 
-                        Packet packet = new Packet(Model.fileAdCode, message.getBytes());
+                        Packet packet = new Packet(Model.fileAdCode, message);
                         for (User user: myModel.getUserList()) {
                             try {
                                 user.writePacket(packet);
-                            } catch (IOException err) {}
+                            } catch (IOException err) {
+                                err.printStackTrace();
+                            }
                         }
                     } else {
                         // file is not valid?
@@ -274,16 +288,35 @@ public class Controller {
                     String message = myModel.getMyName();
                     message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
                     message += messageContents;
-                    Packet packet = new Packet(Model.textCode, message.getBytes());
+                    Packet packet = new Packet(Model.textCode, message);
+
+                    ArrayList<User> deadUsers = new ArrayList<User>();
                     for (User user: myModel.getUserList()) {
                         try {
                             user.writePacket(packet);
-                        } catch (IOException error) {}
+                        } catch(SocketException error) {
+//                            error.printStackTrace();
+                            System.out.println(error.getMessage());
+                            if (error.getMessage().toLowerCase().contains(resetError))
+                                deadUsers.add(user);
+                        } catch (IOException error) {
+                            error.printStackTrace();
+                        }
+                    }
+
+                    for (User user: deadUsers) {
+                        handleConnectionReset(user);
                     }
                     myModel.addMessage(message);
                     myView.update();
                 }
             }
         };
+    }
+
+    private void handleConnectionReset(User user) {
+        myModel.addMessage(user.getName() + " has disconnected");
+        myModel.removeUser(user);
+        myView.update();
     }
 }

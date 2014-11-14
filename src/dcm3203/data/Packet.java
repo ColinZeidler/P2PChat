@@ -37,19 +37,22 @@ import java.nio.ByteBuffer;
  */
 public class Packet {
     private int ID;
-    private ByteBuffer data;
+    private byte[] data;
 
     public Packet(int id, byte[] data){
         ID = id;
-        this.data = ByteBuffer.wrap(data);
+        this.data = data;
     }
 
+    public Packet(int id, String data) {
+        this(id, data.getBytes());
+    }
 
     public int getID(){return ID;}
-    public ByteBuffer getData(){return data.asReadOnlyBuffer();} //contents of the buffer cannot be changed
     public byte[] getBytes() {
-        byte[] bytes = new byte[data.capacity()];
-        data.get(bytes);
-        return bytes;
+        return data;
+    }
+    public int getDataLength() {
+        return data.length;
     }
 }

@@ -56,8 +56,7 @@ public class ConnectionServer implements Runnable{
 //                    send.writeInt(myModel.getUserList().size());
                     for (User user : myModel.getUserList()) {
                         System.out.println("telling " + user.getName() + "to connect to new guy");
-                        Packet data = new Packet(Model.connectCode,
-                                newSocket.getInetAddress().getHostAddress().getBytes());
+                        Packet data = new Packet(Model.connectCode, newSocket.getInetAddress().getHostAddress());
                         user.writePacket(data);
                     }
                 }
