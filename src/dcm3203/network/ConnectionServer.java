@@ -3,6 +3,7 @@ package dcm3203.network;
 import dcm3203.data.Model;
 import dcm3203.data.Packet;
 import dcm3203.data.User;
+import dcm3203.ui.View;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -17,10 +18,12 @@ import java.net.Socket;
 public class ConnectionServer implements Runnable{
     private int port;
     private Model myModel;
+    private View myView;
     private ServerSocket socket;
 
-    public ConnectionServer(int port) {
+    public ConnectionServer(int port, View view) {
         this.port = port;
+        myView = view;
         myModel = Model.getInstance();
     }
 
@@ -63,6 +66,7 @@ public class ConnectionServer implements Runnable{
 
                 //add user to user list
                 myModel.addUser(new User(name.trim(), newSocket));
+                myView.update();
             }
         } catch (IOException e) {
             e.printStackTrace();

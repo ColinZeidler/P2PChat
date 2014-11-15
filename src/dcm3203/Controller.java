@@ -64,7 +64,7 @@ public class Controller {
         myConnect.setVisible(true);
 
         // spin off new Thread for incoming connection handling (just a shell right now)
-        Thread inConnect = new Thread(new ConnectionServer(connectionPort));
+        Thread inConnect = new Thread(new ConnectionServer(connectionPort, myView));
         inConnect.start();
 
         // handle incoming messages from users
@@ -178,7 +178,8 @@ public class Controller {
         BufferedReader incoming = new BufferedReader(new InputStreamReader(newSocket.getInputStream()));
 
         String name = incoming.readLine();
-        Model.getInstance().addUser(new User(name.trim(), newSocket));
+        myModel.addUser(new User(name.trim(), newSocket));
+        myView.update();
         return(true);
     }
 
