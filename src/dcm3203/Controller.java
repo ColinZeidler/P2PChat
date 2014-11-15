@@ -291,6 +291,10 @@ public class Controller {
         };
     }
 
+    /**
+     * action listener to handle the Send message function.
+     * @return actionListener
+     */
     public ActionListener getSendListener() {
         return new ActionListener() {
             @Override
@@ -327,6 +331,10 @@ public class Controller {
         };
     }
 
+    /**
+     * Handle removing a user that has disconnected due to app crash.
+     * @param user user to remove
+     */
     private void handleConnectionReset(User user) {
         myModel.addMessage(user.getName() + " has disconnected");
         myModel.removeUser(user);
