@@ -39,6 +39,8 @@ public class Controller {
     private ConnectDialog myConnect;
     private final int connectionPort = 60023, udpPort = 60022;
     private final long loopPauseTime = 25;  //number of milliseconds to sleep for in each loop
+    private final long hbMax = 10000;
+    private long heartbeatTime = hbMax;
     final String resetError = "connection reset";
     /**
      * Entry method
@@ -125,6 +127,9 @@ public class Controller {
                             myView.update();
                             break;
                         case Model.disconnectCode: break;
+                        case Model.heartbeatCode:
+                            System.out.println(new String(data.getBytes()));
+                            break;
                     }
                 } catch(SocketException e){
                     e.printStackTrace();
@@ -141,6 +146,28 @@ public class Controller {
 
             long endTime = System.currentTimeMillis();
             long diff = endTime - startTime;
+
+            //checking for any dead users by attempting to send a heartbeat message
+            if ((heartbeatTime -= Math.max(diff, loopPauseTime)) < 0) {
+                ArrayList<User> deadUsers = new ArrayList<User>();
+                Packet heartBeat = new Packet(Model.heartbeatCode, "heartbeat");
+                for (User user: myModel.getUserList()) {
+                    try {
+                        user.writePacket(heartBeat);
+                    } catch (SocketException error) {
+                        System.out.println(error.getMessage());
+                        if (error.getMessage().toLowerCase().contains(resetError))
+                            deadUsers.add(user);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                for (User user: deadUsers) {
+                    handleConnectionReset(user);
+                }
+                heartbeatTime = hbMax;
+            }
+
 //            System.out.println(diff);
             if (diff <= loopPauseTime) {
                 try {

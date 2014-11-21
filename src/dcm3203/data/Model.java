@@ -21,6 +21,7 @@ public class Model {
     public static final int fileAdCode = 1;
     public static final int fileReqCode = 2;
     public static final int fileRemoveCode = 4;
+    public static final int heartbeatCode = 6;
 
     public Model() {
         messageHistory = new ArrayDeque<String>();
