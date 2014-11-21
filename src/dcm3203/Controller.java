@@ -59,11 +59,11 @@ public class Controller {
 
     public void run() {
 
+        myConnect.setVisible(true);
+
         // spin off new Thread for UDP discovery handling
         Thread discoverHandle = new Thread(new UDPDiscoveryHandle(udpPort));
         discoverHandle.start();
-
-        myConnect.setVisible(true);
 
         // spin off new Thread for incoming connection handling (just a shell right now)
         Thread inConnect = new Thread(new ConnectionServer(connectionPort, myView));
