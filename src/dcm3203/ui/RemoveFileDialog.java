@@ -16,6 +16,7 @@ public class RemoveFileDialog extends JDialog{
 
     private final Vector<FileData> fileList;
     private final JList<String> fileJList;
+    private final JScrollPane listPane;
 
     private static final String[] NO_FILES = {"You have advertised no files"};
 
@@ -25,21 +26,11 @@ public class RemoveFileDialog extends JDialog{
 
         setSize(600,400);
         setLayout(null);
+        setResizable(false);
         setLocation((int)(getToolkit().getScreenSize().getWidth()/2 - getWidth()/2),
                 (int)(getToolkit().getScreenSize().getHeight()/2 - getHeight()/2));
 
         fileJList = new JList<String>();
-        JScrollPane listPane = new JScrollPane(fileJList,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        fileJList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                fileJList.setSelectedIndex(fileJList.getSelectedIndex());
-            }
-        });
-        fileJList.setSize(500,300);
-        fileJList.setLocation(5,5);
         if (fileList.isEmpty()) {
             fileJList.setListData(NO_FILES);
         } else {
@@ -51,11 +42,23 @@ public class RemoveFileDialog extends JDialog{
 
             fileJList.setListData(fileNames);
         }
+        listPane = new JScrollPane(fileJList,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        fileJList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                fileJList.setSelectedIndex(fileJList.getSelectedIndex());
+                }
+        });
+        fileJList.setSize(500,300);
+        fileJList.setLocation(5,5);
         this.add(listPane);
-        this.setVisible(true);
+        //this.setVisible(true);
     }
 
     public FileData getRemoveFile() {
+        this.setVisible(true);
         if (fileJList.getSelectedValue().equals(NO_FILES[0])) {
             return(null);
         }

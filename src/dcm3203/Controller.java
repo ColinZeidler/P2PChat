@@ -111,6 +111,7 @@ public class Controller {
                         case Model.fileReqCode: break;
                         case Model.fileRemoveCode:
                             String remInfo = new String(data.getBytes());
+                            //fileInfo = new String(data.getBytes()); // TODO sort this out
                             String removerInfo = remInfo.substring(0, remInfo.indexOf(FileData.SPLIT_STR));
                             remInfo = remInfo.substring(remInfo.indexOf("\n") + 1, remInfo.length());
                             FileData removeFile = new FileData(remInfo);
@@ -313,7 +314,7 @@ public class Controller {
             public void actionPerformed(ActionEvent e) {
                 RemoveFileDialog removeFileDialog = new RemoveFileDialog(myView, "Remove advertisement",
                         true, myModel.getFilesAvailable().localFiles());
-
+                FileData remFile = removeFileDialog.getRemoveFile();
 
             }
         };
@@ -323,7 +324,7 @@ public class Controller {
      * action listener to handle the Send message function.
      * @return actionListener
      */
-    public ActionListener getSendListener() {
+        public ActionListener getSendListener() {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
