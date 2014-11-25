@@ -16,8 +16,7 @@ import dcm3203.network.UDPRequester;
  *
  * NOTES:
  *  - IP assumed to be in strings
- *  TODO check if can connect
- *  TODO get local IPs to list
+ *  - IP assumed to be IPv4
  *
  */
 public class ConnectDialog extends JDialog{
@@ -64,7 +63,7 @@ public class ConnectDialog extends JDialog{
     private ActionListener      infoOnNameAction;   //  The handler for getting info on the format of the name
     private ActionListener      listIPAction;       //  The handler for an IP found by discovery
     private ActionListener      searchAction;       //  The handler to search for peers
-    private ComponentAdapter    resizeAdapter;      //  TODO get this working, probably won't happen since not needed
+    private ComponentAdapter    resizeAdapter;      //  Not implemented (as not needed to resize)
     private MouseAdapter        listIPAdapter;      //  The handle for clicking on the list
 
     /////
@@ -106,6 +105,9 @@ public class ConnectDialog extends JDialog{
         initList();
     }
 
+    /////
+    //   Closes window
+    //
     private void cancelButtonPressed() {
         if (getOwner() != null)
             getOwner().dispatchEvent(new WindowEvent(getOwner(), WindowEvent.WINDOW_CLOSING)); //properly kills the program
@@ -114,6 +116,9 @@ public class ConnectDialog extends JDialog{
         dispose();
     }
 
+    /////
+    //   Checks the IP and sends it on its way if valid
+    //
     private void enterIPCheck(String ip) {
         if(isValidIP(ip)) {
             if(nameCheck(enterNameField.getText())) {
@@ -125,6 +130,9 @@ public class ConnectDialog extends JDialog{
         }
     }
 
+    /////
+    //   Returns a string containing all invalid characters
+    //
     static public String getInvalidCharacters(String name) {
         String rString = "";
 
@@ -223,6 +231,9 @@ public class ConnectDialog extends JDialog{
 
     }
 
+    /////
+    //   Sets up the initial list view
+    //
     private void initList() {
         updateList(new Vector<String>());
     }
@@ -292,6 +303,7 @@ public class ConnectDialog extends JDialog{
     /////
     //   This function checks if the IP is valid (format)
     //      * Note not heavily tested, based on something I read
+    //      NOTE 2 : works for IPv4 addresses only
     //
     static public boolean isValidIP(String ip) {
         if (ip == null || ip.isEmpty()) return (false);
@@ -312,10 +324,17 @@ public class ConnectDialog extends JDialog{
         return(true);
     }
 
+    /////
+    //   An earlier name check that consists of simpler rules, called within the more complex one
+    //
     static public boolean isValidName(String name) { return (name.length() > 0
             && name.matches(IS_NAME_VALID_REGEX)
-            && name.length() <= NAME_MAX_LEN); }
+            && name.length() <= NAME_MAX_LEN);
+    }
 
+    /////
+    //   Safely terminates the search by calling terminate and waiting for the thread to fully finish
+    //
     private void killSearch() {
         if(requesterThread != null) {
             requester.terminate();
@@ -327,10 +346,16 @@ public class ConnectDialog extends JDialog{
         }
     }
 
+    /////
+    //   Prevents (at least it looks like it does) multiple IPs in the list from being selected
+    //
     private void listClicked() {
         listIP.setSelectedIndex(listIP.getSelectedIndex());
     }
 
+    /////
+    //   Ensures if the list button is clicked with an invalid IP it does not use it
+    //
     private void listIPCheck(String ip) {
         if(ip == null) {
             JOptionPane.showMessageDialog(this, "No IP selected from list!", "Warning!", JOptionPane.WARNING_MESSAGE);
@@ -341,6 +366,9 @@ public class ConnectDialog extends JDialog{
         }
     }
 
+    /////
+    //   Validates if the name follow the specified format
+    //
     private boolean nameCheck(String name) {
         if(!isValidName(name)) {
             String errMes;
@@ -384,12 +412,18 @@ public class ConnectDialog extends JDialog{
     //
     private void setMyName(String name) { Model.getInstance().setMyName(name); }
 
+    /////
+    //   Sets up and starts the thread to search for local IPs
+    //
     private void startSearch() {
         requester = new UDPRequester(control.getUDPPort(), this);
         requesterThread = new Thread(requester);
         requesterThread.start();
     }
 
+    /////
+    //   Takes the list and updates the list to display the found IPs
+    //
     public void updateList(Vector<String> listData) {
         if (listData.isEmpty())
             listData.add(NO_PEERS_FOUND);
