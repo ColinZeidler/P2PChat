@@ -11,7 +11,6 @@ import dcm3203.ui.RemoveFileDialog;
 import dcm3203.ui.View;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -129,7 +128,7 @@ public class Controller {
                             }
                             myView.update();
                             break;
-                        case Model.disconnectCode: break;
+                        case Model.disconnectCode: break; //TODO add user to list to remove.
                         case Model.heartbeatCode:
                             System.out.println(new String(data.getBytes()));
                             break;
@@ -166,7 +165,7 @@ public class Controller {
                     }
                 }
                 for (User user: deadUsers) {
-                    handleConnectionReset(user);
+                    handleUserDisconnect(user);
                 }
                 heartbeatTime = hbMax;
             }
@@ -353,7 +352,7 @@ public class Controller {
                     }
 
                     for (User user: deadUsers) {
-                        handleConnectionReset(user);
+                        handleUserDisconnect(user);
                     }
                     myModel.addMessage(message);
                     myView.update();
@@ -366,7 +365,7 @@ public class Controller {
      * Handle removing a user that has disconnected due to app crash.
      * @param user user to remove
      */
-    private void handleConnectionReset(User user) {
+    private void handleUserDisconnect(User user) {
         myModel.addMessage(user.getName() + " has disconnected");
         myModel.removeUser(user);
         myView.update();
