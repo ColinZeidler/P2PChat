@@ -100,10 +100,10 @@ public class Controller {
                             FileData newAdFile = new FileData(fileInfo);
 
                             if (newAdFile.isValid()) {
-                                myModel.addMessage(senderInfo + " File advertisement: " + newAdFile.getFileName());
+                                myModel.addMessage(senderInfo + "File advertisement: " + newAdFile.getFileName());
                                 myModel.addFile(newAdFile);
                             } else {
-                                myModel.addMessage(senderInfo + " Failed to advertise file!");
+                                myModel.addMessage(senderInfo + "Failed to advertise file!");
                             }
                             System.out.println(myModel.printFiles());
                             myView.update();
@@ -118,12 +118,12 @@ public class Controller {
 
                             if (removeFile.isValid()) {
                                 if (myModel.removeFile(removeFile)) {
-                                    myModel.addMessage(removerInfo + " File no longer advertised: " + removeFile.getFileName());
+                                    myModel.addMessage(removerInfo + "File no longer advertised: " + removeFile.getFileName());
                                 } else {
-                                    myModel.addMessage(removerInfo + " Failed to remove advertisement on file!");
+                                    myModel.addMessage(removerInfo + "Failed to remove advertisement on file!");
                                 }
                             } else {
-                                myModel.addMessage(removerInfo + " Failed to remove advertisement on file!");
+                                myModel.addMessage(removerInfo + "Failed to remove advertisement on file!");
                             }
                             myView.update();
                             break;
