@@ -24,7 +24,7 @@ public class UDPRequester implements Runnable {
     private volatile boolean    running;                    //  Used to determine whether to exit the thread
 
     private final static int    LISTEN_TIMEOUT = 10000;     //  So the socket times out after a while to resend
-    private final static int    BUFFER_SIZE    = 16000;
+    private final static int    BUFFER_SIZE    = 4096;
 
     private int                 udpPort;                    //  The port that peers listen for request on
     private ConnectDialog       owner;                      //  To send the list to the dialog to update
@@ -64,57 +64,18 @@ public class UDPRequester implements Runnable {
 
             byte[] send = UDPDiscoveryHandle.getDiscoverRequestString().getBytes();
 
+            DatagramPacket sendPacket = new DatagramPacket(send, send.length, InetAddress.getByName("255.255.255.255"), udpPort);
+            socket.send(sendPacket);
+            System.out.println("Sent packet to 255.255.255.255 (Default)");
+
             while (running) {
-
-                /////
-                //   Goes through the network and finds all IPs to send the requests to
-                //
-
-                Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-                while (interfaces.hasMoreElements()) {
-
-                    NetworkInterface networkInterface = interfaces.nextElement();
-
-                    if (!networkInterface.isLoopback() && networkInterface.isUp() && !networkInterface.isVirtual()) {
-
-                        /////
-                        //   Goes through each IP in the network interface
-                        //
-
-                        Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
-                        while(addresses.hasMoreElements()) {
-                            InetAddress inetAddress = addresses.nextElement();
-                            if (inetAddress != null) {
-
-                                /////
-                                //   Checks to see if the address if an IPv4 since that is what we are working with
-                                //  Then checks to see if the address has already been added to the list of found IPs
-                                //  As to not send a request to an address that has already responded
-                                //
-
-                                if (inetAddress instanceof Inet4Address) {
-                                    if (!foundIPs.contains(inetAddress.getHostAddress())) {
-                                        try {
-                                            DatagramPacket sendPacket = new DatagramPacket(send, send.length,
-                                                    inetAddress, udpPort);
-                                            socket.send(sendPacket);
-                                            System.out.println("Sent packet to " + inetAddress.getHostAddress());
-                                            System.out.println("               " + networkInterface.getDisplayName());
-                                        } catch (Exception e) {
-                                            System.out.println(e.getMessage());
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
 
                 /////
                 //   Waits for a response from the address that a request was sent to
                 //     NOTE: Will time out after a while as to send requests again, it will also find
                 //    any new addresses on the network
                 //
+                // TODO probably need to change how this loops to get all responses
 
                 DatagramPacket receive = new DatagramPacket(new byte[BUFFER_SIZE], BUFFER_SIZE);
                 try {
