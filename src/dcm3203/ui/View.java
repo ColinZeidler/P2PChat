@@ -146,6 +146,7 @@ public class View extends JFrame{
         chatLog.setText(""); //clear the chat log
         for (String message: myModel.getMessageHistory())
             chatLog.append(message + System.lineSeparator());
+        chatLog.setCaretPosition(chatLog.getDocument().getLength());
 
         userJList.setListData(myModel.getUserList());
     }
