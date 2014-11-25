@@ -4,9 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.util.Vector;
 
 import dcm3203.Controller;
 import dcm3203.data.Model;
+import dcm3203.network.UDPRequester;
 
 /**
  * Created by Michael on 30/10/2014.
@@ -26,7 +28,17 @@ public class ConnectDialog extends JDialog{
     //           any connecting within the dialog class since this class should really only have functions
     //           and such that has to do with the dialog itself
     //
-    private Controller control;     //  Used to send the IP to a function to connect to the address
+    private Controller          control;     //  Used to send the IP to a function to connect to the address
+
+    /////
+    //   UDPRequester and other related
+    //      Another thread is run to find IPs in background
+    //
+    private boolean             runningUDP = false;
+    private final String        START_UDP_SEARCH = "Search For Peers";
+    private final String        STOP_UDP_SEARCH = "Stop Search";
+    private Thread              requesterThread;
+    private UDPRequester        requester;
 
     /////
     //   All the components
@@ -97,6 +109,8 @@ public class ConnectDialog extends JDialog{
     private void cancelButtonPressed() {
         if (getOwner() != null)
             getOwner().dispatchEvent(new WindowEvent(getOwner(), WindowEvent.WINDOW_CLOSING)); //properly kills the program
+        if (requester != null)
+            killSearch();
         dispose();
     }
 
@@ -145,6 +159,8 @@ public class ConnectDialog extends JDialog{
             public void actionPerformed(ActionEvent e) {
                 if(nameCheck(enterNameField.getText())) {
                     setMyName(enterNameField.getText());
+                    if (requester != null)
+                        killSearch();
                     dispose();
                 }
             }
@@ -180,7 +196,14 @@ public class ConnectDialog extends JDialog{
         searchAction = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO call to get list, do search, whatever
+                if (!runningUDP) {
+                    startSearch();
+                    searchLocalIP.setText(STOP_UDP_SEARCH);
+                } else {
+                    killSearch();
+                    searchLocalIP.setText(START_UDP_SEARCH);
+                }
+                runningUDP = !runningUDP;
             }
         };
 
@@ -201,16 +224,7 @@ public class ConnectDialog extends JDialog{
     }
 
     private void initList() {
-        String[] listData = new String[0];
-
-        // TODO get list data, empty means no IPs found
-
-        if (listData.length == 0) {
-            listData = new String[1];
-            listData[0] = NO_PEERS_FOUND;
-        }
-
-        listIP.setListData(listData);
+        updateList(new Vector<String>());
     }
 
     /////
@@ -270,7 +284,7 @@ public class ConnectDialog extends JDialog{
         joinListedIP.addActionListener(listIPAction);
         add(joinListedIP);
 
-        searchLocalIP = new JButton("Search For Peers");
+        searchLocalIP = new JButton(START_UDP_SEARCH);
         searchLocalIP.addActionListener(searchAction);
         add(searchLocalIP);
     }
@@ -301,6 +315,17 @@ public class ConnectDialog extends JDialog{
     static public boolean isValidName(String name) { return (name.length() > 0
             && name.matches(IS_NAME_VALID_REGEX)
             && name.length() <= NAME_MAX_LEN); }
+
+    private void killSearch() {
+        if(requesterThread != null) {
+            requester.terminate();
+            try {
+                requesterThread.join();
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
 
     private void listClicked() {
         listIP.setSelectedIndex(listIP.getSelectedIndex());
@@ -344,6 +369,8 @@ public class ConnectDialog extends JDialog{
             if(!control.setupConnection(ip)) {
                 JOptionPane.showMessageDialog(this, "Error: Connection was not successful!", "Something went wrong!", JOptionPane.ERROR_MESSAGE);
             } else {
+                if (requester != null)
+                    killSearch();
                 this.dispose();
             }
         } catch (IOException e) {
@@ -356,6 +383,19 @@ public class ConnectDialog extends JDialog{
     //   Sets the name of the user, sets the variable in the model
     //
     private void setMyName(String name) { Model.getInstance().setMyName(name); }
+
+    private void startSearch() {
+        requester = new UDPRequester(control.getUDPPort(), this);
+        requesterThread = new Thread(requester);
+        requesterThread.start();
+    }
+
+    private void updateList(Vector<String> listData) {
+        if (listData.isEmpty())
+            listData.add(NO_PEERS_FOUND);
+
+        listIP.setListData(listData);
+    }
 
     /////
     //   This function sets up the positions and width/heights of the components

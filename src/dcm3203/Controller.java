@@ -369,4 +369,6 @@ public class Controller {
         myModel.removeUser(user);
         myView.update();
     }
+
+    public int getUDPPort() { return (udpPort); }
 }
