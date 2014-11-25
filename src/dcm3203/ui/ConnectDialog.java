@@ -390,7 +390,7 @@ public class ConnectDialog extends JDialog{
         requesterThread.start();
     }
 
-    private void updateList(Vector<String> listData) {
+    public void updateList(Vector<String> listData) {
         if (listData.isEmpty())
             listData.add(NO_PEERS_FOUND);
 
