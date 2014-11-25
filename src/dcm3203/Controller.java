@@ -11,6 +11,7 @@ import dcm3203.ui.RemoveFileDialog;
 import dcm3203.ui.View;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -84,6 +85,7 @@ public class Controller {
                             String message = new String(data.getBytes());
                             myModel.addMessage(message);
                             myView.update();
+//                            Toolkit.getDefaultToolkit().beep();
                             break;
                         case Model.connectCode:
                             System.out.println("I am in the ConnectCode");
