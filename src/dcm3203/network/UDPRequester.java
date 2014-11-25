@@ -63,10 +63,7 @@ public class UDPRequester implements Runnable {
             socket.setSoTimeout(LISTEN_TIMEOUT);
 
             byte[] send = UDPDiscoveryHandle.getDiscoverRequestString().getBytes();
-
-            DatagramPacket sendPacket = new DatagramPacket(send, send.length, InetAddress.getByName("255.255.255.255"), udpPort);
-            socket.send(sendPacket);
-            System.out.println("Sent packet to 255.255.255.255 (Default)");
+            broadcast(send);
 
             while (running) {
 
@@ -81,6 +78,7 @@ public class UDPRequester implements Runnable {
                     socket.receive(receive);
                 } catch (SocketTimeoutException e) {
                     System.out.println(e.getMessage());
+                    broadcast(send);
                     continue;
                 }
 
@@ -108,6 +106,12 @@ public class UDPRequester implements Runnable {
         }
 
         System.out.println("Terminated");
+    }
+
+    private void broadcast(byte[] send) throws IOException{
+        DatagramPacket sendPacket = new DatagramPacket(send, send.length, InetAddress.getByName("255.255.255.255"), udpPort);
+        socket.send(sendPacket);
+        System.out.println("Sent packet to 255.255.255.255 (Default)");
     }
 
 }
