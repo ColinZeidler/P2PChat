@@ -18,6 +18,10 @@ public class UDPDiscoveryHandle implements Runnable {
         this.port = port;
     }
 
+    //  Needed to add for use within the UDPRequester class
+    public static String getDiscoverRequestString() { return (discoverRequest); }
+    public static String getDiscoverResponseString() { return (discoverResponse); }
+
     /**
      * constantly loops over actions
      * waits for a UDP packet
