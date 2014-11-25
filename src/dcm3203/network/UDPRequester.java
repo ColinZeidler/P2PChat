@@ -75,7 +75,6 @@ public class UDPRequester implements Runnable {
                 //     NOTE: Will time out after a while as to send requests again, it will also find
                 //    any new addresses on the network
                 //
-                // TODO probably need to change how this loops to get all responses
 
                 DatagramPacket receive = new DatagramPacket(new byte[BUFFER_SIZE], BUFFER_SIZE);
                 try {
