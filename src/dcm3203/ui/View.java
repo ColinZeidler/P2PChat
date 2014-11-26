@@ -59,7 +59,16 @@ public class View extends JFrame{
                 KeyEvent.VK_N, InputEvent.ALT_MASK));
         menuItem.getAccessibleContext().setAccessibleDescription(
                 "Brings the connection dialog back up to connect to a new room");
-        menuItem.addActionListener(myController.getConnectDialogListener());
+        menuItem.addActionListener(myController.getNewConnectListener());
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Disconnect from Room",
+                KeyEvent.VK_D);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_D, InputEvent.ALT_MASK));
+        menuItem.getAccessibleContext().setAccessibleDescription(
+                "Disconnects and brings the connection dialog back up to connect to a new room");
+        menuItem.addActionListener(myController.getDisconnectListener());
         menu.add(menuItem);
 
         menu.addSeparator();
