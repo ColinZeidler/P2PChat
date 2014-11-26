@@ -320,6 +320,7 @@ public class Controller {
                         message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
 
                         myModel.addMessage(message + " Advertised: " + fileData.getFileName());
+                        myView.update();
 
                         message += "\n" + fileData.getSendDataString();
 
