@@ -4,7 +4,6 @@ import dcm3203.ui.ConnectDialog;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.Enumeration;
 import java.util.Vector;
 
 /**

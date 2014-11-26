@@ -6,10 +6,8 @@ import dcm3203.data.User;
 import dcm3203.ui.View;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-
 /**
  * Created by Colin on 2014-10-31.
  *

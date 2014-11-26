@@ -6,7 +6,6 @@ import dcm3203.data.Packet;
 import dcm3203.data.User;
 import dcm3203.network.ConnectionServer;
 import dcm3203.network.UDPDiscoveryHandle;
-import dcm3203.network.UDPRequester;
 import dcm3203.ui.ConnectDialog;
 import dcm3203.ui.RemoveFileDialog;
 import dcm3203.ui.View;
