@@ -59,13 +59,13 @@ public class Controller {
     public Controller() {
         myModel = Model.getInstance();
         myView = new View(this);
-        myConnect = new ConnectDialog(myView, "Connect", true, this);
     }
 
     public void run() {
         running = true;
 
         while (running) {
+            myConnect = new ConnectDialog(myView, "Connect", true, this);
             myConnect.setVisible(true);
             connected = true;
 
