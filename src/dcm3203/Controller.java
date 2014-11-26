@@ -6,6 +6,7 @@ import dcm3203.data.Packet;
 import dcm3203.data.User;
 import dcm3203.network.ConnectionServer;
 import dcm3203.network.UDPDiscoveryHandle;
+import dcm3203.network.UDPRequester;
 import dcm3203.ui.ConnectDialog;
 import dcm3203.ui.RemoveFileDialog;
 import dcm3203.ui.View;
@@ -42,6 +43,10 @@ public class Controller {
     private final long hbMax = 10000;
     private long heartbeatTime = hbMax;
     final String resetError = "connection reset";
+
+    private boolean connected;
+    private boolean running;
+
     /**
      * Entry method
      * @param args command line args, ignored
@@ -58,126 +63,144 @@ public class Controller {
     }
 
     public void run() {
+        running = true;
 
-        myConnect.setVisible(true);
+        while (running) {
+            myConnect.setVisible(true);
+            connected = true;
 
-        // spin off new Thread for UDP discovery handling
-        Thread discoverHandle = new Thread(new UDPDiscoveryHandle(udpPort));
-        discoverHandle.start();
+            // spin off new Thread for UDP discovery handling
+            UDPDiscoveryHandle udpDiscoveryHandle = new UDPDiscoveryHandle(udpPort);
+            Thread discoverHandle = new Thread(udpDiscoveryHandle);
+            discoverHandle.start();
 
-        // spin off new Thread for incoming connection handling (just a shell right now)
-        Thread inConnect = new Thread(new ConnectionServer(connectionPort, myView));
-        inConnect.start();
+            // spin off new Thread for incoming connection handling (just a shell right now)
+            ConnectionServer connectionServer = new ConnectionServer(connectionPort, myView);
+            Thread inConnect = new Thread(connectionServer);
+            inConnect.start();
 
-        // handle incoming messages from users
-        while (true) {
-            long startTime = System.currentTimeMillis();
+            // handle incoming messages from users
+            while (connected) {
+                long startTime = System.currentTimeMillis();
 
-            Vector<User> newUsers = new Vector<User>(1);
-            for (User user: myModel.getUserList()) {
-                try {
-                    Packet data = user.readPacket();
-                    if (data == null)
-                        continue;
-                    switch (data.getID()) {
-                        case Model.textCode:
-                            String message = new String(data.getBytes());
-                            myModel.addMessage(message);
-                            myView.update();
-//                            Toolkit.getDefaultToolkit().beep();
-                            break;
-                        case Model.connectCode:
-                            System.out.println("I am in the ConnectCode");
-                            String host = new String(data.getBytes()).trim();
-                            User temp = incomingConnect(host);
-                            if (temp != null)
-                                newUsers.add(temp);
-                            myView.update();
-                            break;
-                        case Model.fileAdCode:
-                            String fileInfo = new String(data.getBytes());
-                            String senderInfo = fileInfo.substring(0, fileInfo.indexOf(FileData.SPLIT_STR));
-                            fileInfo = fileInfo.substring(fileInfo.indexOf("\n") + 1, fileInfo.length());
-                            FileData newAdFile = new FileData(fileInfo);
+                Vector<User> newUsers = new Vector<User>(1);
+                for (User user : myModel.getUserList()) {
+                    try {
+                        Packet data = user.readPacket();
+                        if (data == null)
+                            continue;
+                        switch (data.getID()) {
+                            case Model.textCode:
+                                String message = new String(data.getBytes());
+                                myModel.addMessage(message);
+                                myView.update();
+//                              Toolkit.getDefaultToolkit().beep();
+                                break;
+                            case Model.connectCode:
+                                System.out.println("I am in the ConnectCode");
+                                String host = new String(data.getBytes()).trim();
+                                User temp = incomingConnect(host);
+                                if (temp != null)
+                                    newUsers.add(temp);
+                                myView.update();
+                                break;
+                            case Model.fileAdCode:
+                                String fileInfo = new String(data.getBytes());
+                                String senderInfo = fileInfo.substring(0, fileInfo.indexOf(FileData.SPLIT_STR));
+                                fileInfo = fileInfo.substring(fileInfo.indexOf("\n") + 1, fileInfo.length());
+                                FileData newAdFile = new FileData(fileInfo);
 
-                            if (newAdFile.isValid()) {
-                                myModel.addMessage(senderInfo + "File advertisement: " + newAdFile.getFileName());
-                                myModel.addFile(newAdFile);
-                            } else {
-                                myModel.addMessage(senderInfo + "Failed to advertise file!");
-                            }
-                            System.out.println(myModel.printFiles());
-                            myView.update();
-                            break;
-                        case Model.fileReqCode: break;
-                        case Model.fileRemoveCode:
-                            String remInfo = new String(data.getBytes());
-                            //fileInfo = new String(data.getBytes()); // TODO sort this out
-                            String removerInfo = remInfo.substring(0, remInfo.indexOf(FileData.SPLIT_STR));
-                            remInfo = remInfo.substring(remInfo.indexOf("\n") + 1, remInfo.length());
-                            FileData removeFile = new FileData(remInfo);
+                                if (newAdFile.isValid()) {
+                                    myModel.addMessage(senderInfo + "File advertisement: " + newAdFile.getFileName());
+                                    myModel.addFile(newAdFile);
+                                } else {
+                                    myModel.addMessage(senderInfo + "Failed to advertise file!");
+                                }
+                                System.out.println(myModel.printFiles());
+                                myView.update();
+                                break;
+                            case Model.fileReqCode:
+                                break;
+                            case Model.fileRemoveCode:
+                                String remInfo = new String(data.getBytes());
+                                //fileInfo = new String(data.getBytes()); // TODO sort this out
+                                String removerInfo = remInfo.substring(0, remInfo.indexOf(FileData.SPLIT_STR));
+                                remInfo = remInfo.substring(remInfo.indexOf("\n") + 1, remInfo.length());
+                                FileData removeFile = new FileData(remInfo);
 
-                            if (removeFile.isValid()) {
-                                if (myModel.removeFile(removeFile)) {
-                                    myModel.addMessage(removerInfo + "File no longer advertised: " + removeFile.getFileName());
+                                if (removeFile.isValid()) {
+                                    if (myModel.removeFile(removeFile)) {
+                                        myModel.addMessage(removerInfo + "File no longer advertised: " + removeFile.getFileName());
+                                    } else {
+                                        myModel.addMessage(removerInfo + "Failed to remove advertisement on file!");
+                                    }
                                 } else {
                                     myModel.addMessage(removerInfo + "Failed to remove advertisement on file!");
                                 }
-                            } else {
-                                myModel.addMessage(removerInfo + "Failed to remove advertisement on file!");
-                            }
-                            myView.update();
-                            break;
-                        case Model.disconnectCode: break; //TODO add user to list to remove.
-                        case Model.heartbeatCode:
-                            System.out.println(new String(data.getBytes()));
-                            break;
-                    }
-                } catch(SocketException e){
-                    e.printStackTrace();
-                    System.out.println(e.getMessage());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-            for (User newUser: newUsers) {
-                myModel.addUser(newUser);
-                myView.update();
-            }
-
-            long endTime = System.currentTimeMillis();
-            long diff = endTime - startTime;
-
-            //checking for any dead users by attempting to send a heartbeat message
-            if ((heartbeatTime -= Math.max(diff, loopPauseTime)) < 0) {
-                ArrayList<User> deadUsers = new ArrayList<User>();
-                Packet heartBeat = new Packet(Model.heartbeatCode, "heartbeat");
-                for (User user: myModel.getUserList()) {
-                    try {
-                        user.writePacket(heartBeat);
-                    } catch (SocketException error) {
-                        System.out.println(error.getMessage());
-                        if (error.getMessage().toLowerCase().contains(resetError))
-                            deadUsers.add(user);
+                                myView.update();
+                                break;
+                            case Model.disconnectCode:
+                                break; //TODO add user to list to remove.
+                            case Model.heartbeatCode:
+                                System.out.println(new String(data.getBytes()));
+                                break;
+                        }
+                    } catch (SocketException e) {
+                        e.printStackTrace();
+                        System.out.println(e.getMessage());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                 }
-                for (User user: deadUsers) {
-                    handleUserDisconnect(user);
+                for (User newUser : newUsers) {
+                    myModel.addUser(newUser);
+                    myView.update();
                 }
-                heartbeatTime = hbMax;
+
+                long endTime = System.currentTimeMillis();
+                long diff = endTime - startTime;
+
+                //checking for any dead users by attempting to send a heartbeat message
+                if ((heartbeatTime -= Math.max(diff, loopPauseTime)) < 0) {
+                    ArrayList<User> deadUsers = new ArrayList<User>();
+                    Packet heartBeat = new Packet(Model.heartbeatCode, "heartbeat");
+                    for (User user : myModel.getUserList()) {
+                        try {
+                            user.writePacket(heartBeat);
+                        } catch (SocketException error) {
+                            System.out.println(error.getMessage());
+                            if (error.getMessage().toLowerCase().contains(resetError))
+                                deadUsers.add(user);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    for (User user : deadUsers) {
+                        handleUserDisconnect(user);
+                    }
+                    heartbeatTime = hbMax;
+                }
+
+//              System.out.println(diff);
+                if (diff <= loopPauseTime) {
+                    try {
+                        Thread.sleep(loopPauseTime - diff);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
-//            System.out.println(diff);
-            if (diff <= loopPauseTime) {
-                try {
-                    Thread.sleep(loopPauseTime - diff);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            udpDiscoveryHandle.terminate();
+            connectionServer.terminate();
+            try {
+                discoverHandle.join();
+                inConnect.join();
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
             }
+
         }
     }
 
@@ -247,7 +270,7 @@ public class Controller {
         return newUser;
     }
 
-    public ActionListener getConnectDialogListener() {
+    public ActionListener getNewConnectListener() {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -256,11 +279,21 @@ public class Controller {
         };
     }
 
+    public ActionListener getDisconnectListener() {
+        return (new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                disconnectSelf();
+            }
+        });
+    }
+
     public ActionListener getExitListener() {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0); // TODO needs to clean up, not proper exit
+                disconnectSelf();
+                endProgram();
             }
         };
     }
@@ -371,5 +404,12 @@ public class Controller {
         myView.update();
     }
 
+    /////
+    //   Gets the UDP port number used (for the UDPRequester class
+    //
     public int getUDPPort() { return (udpPort); }
+
+    private void disconnectSelf() { connected = false; }
+
+    private void endProgram() { running = false; }
 }
