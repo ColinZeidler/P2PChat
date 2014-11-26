@@ -14,6 +14,8 @@ public class UDPDiscoveryHandle implements Runnable {
     private static final String discoverRequest = "p2p_chat_discovery_packet";
     private static final String discoverResponse = "p2p_chat_discovery_response";
 
+    private boolean running;
+
     public UDPDiscoveryHandle(int port) {
         this.port = port;
     }
@@ -31,11 +33,12 @@ public class UDPDiscoveryHandle implements Runnable {
     @Override
     public void run(){
         System.out.println("Port is: " + this.port);
+        running = true;
         try {
             socket = new DatagramSocket(port, InetAddress.getByName("0.0.0.0"));
             socket.setBroadcast(true);
 
-            while (true) {
+            while (running) {
                 //receive packet
                 byte[] recvBuff = new byte[4096];
                 DatagramPacket packet = new DatagramPacket(recvBuff, recvBuff.length);
@@ -54,5 +57,10 @@ public class UDPDiscoveryHandle implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void terminate() {
+        running = false;
+        socket.close();
     }
 }

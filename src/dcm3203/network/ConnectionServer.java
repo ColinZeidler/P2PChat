@@ -21,6 +21,8 @@ public class ConnectionServer implements Runnable{
     private View myView;
     private ServerSocket socket;
 
+    private boolean running;
+
     public ConnectionServer(int port, View view) {
         this.port = port;
         myView = view;
@@ -36,13 +38,14 @@ public class ConnectionServer implements Runnable{
      */
     @Override
     public void run() {
+        running = true;
         System.out.println("temp out, nothing actually done");
         System.out.println("Port is: " + this.port);
 
         try {
             socket = new ServerSocket(port);
 
-            while (true) {
+            while (running) {
                 Socket newSocket = socket.accept();
                 //get name from newSocket
 
@@ -68,6 +71,22 @@ public class ConnectionServer implements Runnable{
                 myModel.addUser(new User(name.trim(), newSocket));
                 myView.update();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void terminate() {
+        running = false;
+
+        try {
+            for (User user : myModel.getUserList()) {
+                System.out.println("telling " + user.getName() + "to disconnect from me");
+                Packet data = new Packet(Model.disconnectCode, myModel.getMyName());
+                user.writePacket(data);
+            }
+
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
