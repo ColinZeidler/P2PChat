@@ -70,7 +70,7 @@ public class ConnectionServer implements Runnable{
                 myView.update();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 

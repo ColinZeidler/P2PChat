@@ -55,7 +55,7 @@ public class UDPDiscoveryHandle implements Runnable {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
