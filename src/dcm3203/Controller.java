@@ -21,6 +21,7 @@ import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Vector;
 
 /**
@@ -82,6 +83,8 @@ public class Controller {
             while (connected) {
                 long startTime = System.currentTimeMillis();
 
+                HashSet<User> deadUsers = new HashSet<User>();
+
                 Vector<User> newUsers = new Vector<User>(1);
                 for (User user : myModel.getUserList()) {
                     try {
@@ -139,7 +142,8 @@ public class Controller {
                                 myView.update();
                                 break;
                             case Model.disconnectCode:
-                                break; //TODO add user to list to remove.
+                                deadUsers.add(user);
+                                break;
                             case Model.heartbeatCode:
                                 System.out.println(new String(data.getBytes()));
                                 break;
@@ -162,7 +166,6 @@ public class Controller {
 
                 //checking for any dead users by attempting to send a heartbeat message
                 if ((heartbeatTime -= Math.max(diff, loopPauseTime)) < 0) {
-                    ArrayList<User> deadUsers = new ArrayList<User>();
                     Packet heartBeat = new Packet(Model.heartbeatCode, "heartbeat");
                     for (User user : myModel.getUserList()) {
                         try {
@@ -175,10 +178,11 @@ public class Controller {
                             e.printStackTrace();
                         }
                     }
-                    for (User user : deadUsers) {
-                        handleUserDisconnect(user);
-                    }
                     heartbeatTime = hbMax;
+                }
+
+                for (User user : deadUsers) {
+                    handleUserDisconnect(user);
                 }
 
 //              System.out.println(diff);
@@ -412,6 +416,15 @@ public class Controller {
     public int getUDPPort() { return (udpPort); }
 
     private void disconnectSelf() {
+        Packet dcPacket = new Packet(Model.disconnectCode, "disconnect");
+        for (User user: myModel.getUserList()) {
+            try {
+                user.writePacket(dcPacket);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         connected = false;
         myModel.removeAllUsers();
         myModel.clearMessages();
