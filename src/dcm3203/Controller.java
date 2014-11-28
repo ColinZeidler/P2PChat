@@ -371,8 +371,8 @@ public class Controller {
                 String messageContents = myView.getMessage();
 
                 if(!messageContents.equals("")) {   // To prevent blank messages from being sent
-                    String message = myModel.getMyName();
-                    message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
+                    String message = new SimpleDateFormat("[HH:mm:ss] ").format(Calendar.getInstance().getTime());
+                    message += myModel.getMyName() + ": ";
                     message += messageContents;
                     Packet packet = new Packet(Model.textCode, message);
 
