@@ -201,6 +201,8 @@ public class Controller {
             }
 
         }
+
+        System.exit(0);
     }
 
     /**
@@ -409,7 +411,12 @@ public class Controller {
     //
     public int getUDPPort() { return (udpPort); }
 
-    private void disconnectSelf() { connected = false; }
+    private void disconnectSelf() {
+        connected = false;
+        myModel.removeAllUsers();
+        myModel.clearMessages();
+        myView.update();
+    }
 
     private void endProgram() { running = false; }
 }
