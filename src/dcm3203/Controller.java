@@ -99,7 +99,6 @@ public class Controller {
 //                              Toolkit.getDefaultToolkit().beep();
                                 break;
                             case Model.connectCode:
-                                System.out.println("I am in the ConnectCode");
                                 String host = new String(data.getBytes()).trim();
                                 User temp = incomingConnect(host);
                                 if (temp != null)

@@ -66,6 +66,7 @@ public class Model {
     }
 
     public void addUser(User user) {
+        addMessage(user.getName() + " has connected.");
         synchronized (userList) {
             this.userList.add(user);
         }

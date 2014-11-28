@@ -61,12 +61,10 @@ public class User {
     public Packet readPacket() throws IOException{
         if(receiveStream.available() > 3) {
             int id = receiveStream.readInt();
-            System.out.println(id);
 //            if(id == -1) {
 //                //End of file. PANIC!
 //            }
             int size = receiveStream.readInt();
-            System.out.println(size);
             byte[] data = new byte[size];
 
             int off = 0;

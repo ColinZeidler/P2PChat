@@ -141,7 +141,6 @@ public class View extends JFrame{
         this.add(sendButton, c);
 
         this.getRootPane().setDefaultButton(sendButton);
-        //TODO fix shit when resizing
         setVisible(true);
 
     }

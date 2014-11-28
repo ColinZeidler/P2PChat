@@ -9,8 +9,6 @@ import java.util.Vector;
 /**
  * Created by Michael on 24/11/2014.
  *
- * // TODO test the shit out of this
- *
  * UDPRequester
  *      This class sends out the UDP requests to all on the local network
  *
