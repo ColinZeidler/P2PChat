@@ -7,7 +7,7 @@ import dcm3203.data.User;
 import dcm3203.network.ConnectionServer;
 import dcm3203.network.UDPDiscoveryHandle;
 import dcm3203.ui.ConnectDialog;
-import dcm3203.ui.RemoveFileDialog;
+import dcm3203.ui.GetFileDialog;
 import dcm3203.ui.View;
 
 import javax.swing.*;
@@ -315,26 +315,29 @@ public class Controller {
                     FileData fileData = new FileData(file.getName(), file.getPath());
 
                     if (fileData.isValid()) {
-                        Model.getInstance().addFile(fileData);
-                        System.out.println(myModel.printFiles());
+                        if (Model.getInstance().addFile(fileData)) {
+                            System.out.println(myModel.printFiles());
 
-                        // Sends the file advertisement
+                            // Sends the file advertisement
 
-                        String message = myModel.getMyName();
-                        message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
+                            String message = myModel.getMyName();
+                            message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
 
-                        myModel.addMessage(message + " Advertised: " + fileData.getFileName());
-                        myView.update();
+                            myModel.addMessage(message + " Advertised: " + fileData.getFileName());
+                            myView.update();
 
-                        message += "\n" + fileData.getSendDataString();
+                            message += "\n" + fileData.getSendDataString();
 
-                        Packet packet = new Packet(Model.fileAdCode, message);
-                        for (User user: myModel.getUserList()) {
-                            try {
-                                user.writePacket(packet);
-                            } catch (IOException err) {
-                                err.printStackTrace();
+                            Packet packet = new Packet(Model.fileAdCode, message);
+                            for (User user : myModel.getUserList()) {
+                                try {
+                                    user.writePacket(packet);
+                                } catch (IOException err) {
+                                    err.printStackTrace();
+                                }
                             }
+                        } else {
+                            System.out.println("File already advertised");
                         }
                     } else {
                         // file is not valid?
@@ -351,10 +354,8 @@ public class Controller {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                RemoveFileDialog removeFileDialog = new RemoveFileDialog(myView, "Remove advertisement",
-                        true, myModel.getFilesAvailable().localFiles());
-                FileData remFile = removeFileDialog.getRemoveFile();
-
+                GetFileDialog removeFileDialog = new GetFileDialog(myView, "Remove advertisement",
+                        true, myModel.getFilesAvailable().getLocalFiles());
             }
         };
     }

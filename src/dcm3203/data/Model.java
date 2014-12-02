@@ -103,11 +103,16 @@ public class Model {
 
     public boolean addFile(FileData fileData) {
         if (fileData.isHave()) {
-            this.filesAvailable.addToMyList(fileData);
+            if (!this.filesAvailable.isAdvertisedByMe(fileData)) {
+                this.filesAvailable.addToMyList(fileData);
+                return (true);
+            }
         } else {
             synchronized (userList) {
                 for (User user : userList) {
                     if (user.getName().equals(fileData.getFileLocation())) {
+                        if (this.filesAvailable.isAdvertisedByUser(user, fileData))
+                            return (false);
                         this.filesAvailable.add(user, fileData);
                         return (true);
                     }
