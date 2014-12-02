@@ -93,6 +93,14 @@ public class FileData implements Comparator<FileData>, Comparable<FileData> {
         return (cVal);
     }
 
+    /////
+    //   Determines if the instance is equal to the other
+    //
+    public boolean equals(FileData fileData) { return (0 == compare(this, fileData)); }
+
+    /////
+    //   Does the same as compare(FileData, FileData) but is call with an instance
+    //
     public int compareTo(@NotNull FileData fileData) { return (compare(this, fileData)); }
 
     /////

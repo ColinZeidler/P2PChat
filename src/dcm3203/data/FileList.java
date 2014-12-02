@@ -107,9 +107,30 @@ public class FileList {
         list.add(fileData);
     }
 
-    public synchronized boolean isAdvertisedByMe(FileData fileData) { return (myFiles.contains(fileData)); }
+    public synchronized boolean isAdvertisedByMe(FileData fileData) {
+        for (FileData myFileData : myFiles)
+            if (myFileData.equals(fileData))
+                return (true);
 
-    public synchronized boolean isAdvertisedByUser(User user, FileData fileData) { return (userFiles.get(user).contains(fileData)); }
+        return (false);
+    }
+
+    public synchronized boolean isAdvertisedByUser(FileData fileData) {
+        for (User user : Model.getInstance().getUserList())
+            for (FileData userFileData : userFiles.get(user))
+                if (userFileData.equals(fileData))
+                    return (true);
+
+        return (false);
+    }
+
+    public synchronized boolean isAdvertisedByUser(User user, FileData fileData) {
+        for (FileData userFileData : userFiles.get(user))
+            if (userFileData.equals(fileData))
+                return (true);
+
+        return (false);
+    }
 
     /////
     //   Removes a single file from the list (if add functionality to remove a file that a user does
