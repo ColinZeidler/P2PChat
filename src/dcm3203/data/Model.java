@@ -53,6 +53,12 @@ public class Model {
         }
     }
 
+    public void clearMessages() {
+        synchronized (messageHistory) {
+            messageHistory.clear();
+        }
+    }
+
     public Vector<User> getUserList() {
         synchronized (userList) {
             return userList;
@@ -60,6 +66,7 @@ public class Model {
     }
 
     public void addUser(User user) {
+        addMessage(user.getName() + " has connected.");
         synchronized (userList) {
             this.userList.add(user);
         }
@@ -75,6 +82,16 @@ public class Model {
                 System.out.println("unable to gracefully close socket");
             }
             this.userList.remove(user);
+        }
+    }
+
+    public void removeAllUsers() {
+        User user;
+        synchronized (userList) {
+            while (userList.size() > 0) {
+                user = userList.get(userList.size() - 1);
+                removeUser(user);
+            }
         }
     }
 

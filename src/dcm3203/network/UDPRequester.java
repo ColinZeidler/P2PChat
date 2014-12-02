@@ -4,13 +4,10 @@ import dcm3203.ui.ConnectDialog;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.Enumeration;
 import java.util.Vector;
 
 /**
  * Created by Michael on 24/11/2014.
- *
- * // TODO test the shit out of this
  *
  * UDPRequester
  *      This class sends out the UDP requests to all on the local network

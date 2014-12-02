@@ -6,7 +6,6 @@ import dcm3203.data.Packet;
 import dcm3203.data.User;
 import dcm3203.network.ConnectionServer;
 import dcm3203.network.UDPDiscoveryHandle;
-import dcm3203.network.UDPRequester;
 import dcm3203.ui.ConnectDialog;
 import dcm3203.ui.RemoveFileDialog;
 import dcm3203.ui.View;
@@ -22,6 +21,7 @@ import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Vector;
 
 /**
@@ -83,6 +83,8 @@ public class Controller {
             while (connected) {
                 long startTime = System.currentTimeMillis();
 
+                HashSet<User> deadUsers = new HashSet<User>();
+
                 Vector<User> newUsers = new Vector<User>(1);
                 for (User user : myModel.getUserList()) {
                     try {
@@ -97,7 +99,6 @@ public class Controller {
 //                              Toolkit.getDefaultToolkit().beep();
                                 break;
                             case Model.connectCode:
-                                System.out.println("I am in the ConnectCode");
                                 String host = new String(data.getBytes()).trim();
                                 User temp = incomingConnect(host);
                                 if (temp != null)
@@ -140,7 +141,8 @@ public class Controller {
                                 myView.update();
                                 break;
                             case Model.disconnectCode:
-                                break; //TODO add user to list to remove.
+                                deadUsers.add(user);
+                                break;
                             case Model.heartbeatCode:
                                 System.out.println(new String(data.getBytes()));
                                 break;
@@ -163,7 +165,6 @@ public class Controller {
 
                 //checking for any dead users by attempting to send a heartbeat message
                 if ((heartbeatTime -= Math.max(diff, loopPauseTime)) < 0) {
-                    ArrayList<User> deadUsers = new ArrayList<User>();
                     Packet heartBeat = new Packet(Model.heartbeatCode, "heartbeat");
                     for (User user : myModel.getUserList()) {
                         try {
@@ -176,10 +177,11 @@ public class Controller {
                             e.printStackTrace();
                         }
                     }
-                    for (User user : deadUsers) {
-                        handleUserDisconnect(user);
-                    }
                     heartbeatTime = hbMax;
+                }
+
+                for (User user : deadUsers) {
+                    handleUserDisconnect(user);
                 }
 
 //              System.out.println(diff);
@@ -202,6 +204,8 @@ public class Controller {
             }
 
         }
+
+        System.exit(0);
     }
 
     /**
@@ -366,8 +370,8 @@ public class Controller {
                 String messageContents = myView.getMessage();
 
                 if(!messageContents.equals("")) {   // To prevent blank messages from being sent
-                    String message = myModel.getMyName();
-                    message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
+                    String message = new SimpleDateFormat("[HH:mm:ss] ").format(Calendar.getInstance().getTime());
+                    message += myModel.getMyName() + ": ";
                     message += messageContents;
                     Packet packet = new Packet(Model.textCode, message);
 
@@ -410,7 +414,21 @@ public class Controller {
     //
     public int getUDPPort() { return (udpPort); }
 
-    private void disconnectSelf() { connected = false; }
+    private void disconnectSelf() {
+        Packet dcPacket = new Packet(Model.disconnectCode, "disconnect");
+        for (User user: myModel.getUserList()) {
+            try {
+                user.writePacket(dcPacket);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        connected = false;
+        myModel.removeAllUsers();
+        myModel.clearMessages();
+        myView.update();
+    }
 
     private void endProgram() { running = false; }
 }
