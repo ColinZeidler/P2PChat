@@ -1,6 +1,9 @@
 package dcm3203.data;
 
+import com.sun.istack.internal.NotNull;
+
 import java.io.File;
+import java.util.Comparator;
 
 /**
  * Created by Michael on 09/11/2014.
@@ -32,7 +35,7 @@ import java.io.File;
  *          fileSize - the size of the file
  *          have - if true the file is local
  */
-public class FileData {
+public class FileData implements Comparator<FileData>, Comparable<FileData> {
 
     private String  name;       //  The name of the file
     private String  location;   //  directory if have file, name if other user has file
@@ -66,6 +69,31 @@ public class FileData {
             System.err.println(e.getMessage());
         }
     }
+
+    /////
+    //   Used to compare two FileData objects
+    //      - First compares file name
+    //      - Then compares location
+    //      - Then compares size
+    //      - Then have value
+    //
+    public int compare(FileData a, FileData b) {
+        int cVal;
+
+        if (a == null) return (Integer.MAX_VALUE);
+        if (b == null) return (Integer.MIN_VALUE);
+
+        if ((cVal = a.name.compareToIgnoreCase(b.name)) == 0) {
+            if ((cVal = a.location.compareToIgnoreCase(b.location)) == 0) {
+                if ((cVal = Long.compare(a.fileSize, b.fileSize)) == 0)
+                    cVal = (a.have ? 1 : 0) - (b.have ? 1 : 0);
+            }
+        }
+
+        return (cVal);
+    }
+
+    public int compareTo(@NotNull FileData fileData) { return (compare(this, fileData)); }
 
     /////
     //   Makes a FileData String without changing values for the string
