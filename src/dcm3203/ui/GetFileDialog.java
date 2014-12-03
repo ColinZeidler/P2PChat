@@ -5,8 +5,6 @@ import dcm3203.data.FileData;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import javax.swing.*;
@@ -14,21 +12,20 @@ import javax.swing.*;
 /**
  * Created by Michael on 01/12/2014.
  *
+ * GetFileDialog
+ *      Use: Make new dialog, will do the work to get file from the list
+ *          After call getFileSelected which returns the selected file
+ *
  */
 
 public class GetFileDialog extends JDialog {
 
-    private final List<FileData> fileList;
-    private final JList<String> fileJList;
-    private final JScrollPane listPane;
-
-    private FileData fileSelected;
+    private FileData fileSelected;  //  The selected file
 
     private static final String[] NO_FILES = {"No Files Advertised"};
 
     public GetFileDialog(Frame owner, String title, boolean modal, final List<FileData> fileList) {
         super(owner, title, modal);
-        this.fileList = fileList;
 
         setSize(500,400);
         setLayout(null);
@@ -36,12 +33,12 @@ public class GetFileDialog extends JDialog {
         setLocation((int)(getToolkit().getScreenSize().getWidth()/2 - getWidth()/2),
                 (int)(getToolkit().getScreenSize().getHeight()/2 - getHeight()/2));
 
-        fileJList = new JList<String>();
-        listPane = new JScrollPane(fileJList,
+        final JList<String> fileJList = new JList<String>();
+        JScrollPane listPane = new JScrollPane(fileJList,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         listPane.setLocation(5,5);
-        listPane.setSize(485,300);
+        listPane.setSize(485, 300);
         this.add(listPane);
 
         JButton cancelButton = new JButton("Cancel");
@@ -85,5 +82,8 @@ public class GetFileDialog extends JDialog {
         this.setVisible(true);
     }
 
+    /////
+    //   Returns the selected file
+    //
     public FileData getFileSelected() { return (fileSelected); }
 }
