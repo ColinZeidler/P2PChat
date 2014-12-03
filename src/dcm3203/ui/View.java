@@ -91,6 +91,16 @@ public class View extends JFrame{
         menu.add(menuItem);
 
         menu.addSeparator();
+        menuItem = new JMenuItem("Request File",
+                KeyEvent.VK_G);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_G, InputEvent.ALT_MASK));
+        menuItem.getAccessibleContext().setAccessibleDescription(
+                "Request file for transfer");
+        menuItem.addActionListener(myController.getFileTransferRequestListener());
+        menu.add(menuItem);
+
+        menu.addSeparator();
         menuItem = new JMenuItem("Exit",
                 KeyEvent.VK_E);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(
