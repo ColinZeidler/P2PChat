@@ -127,6 +127,7 @@ public class Model {
     }
 
     public boolean removeFile(FileData fileData) {
+        System.out.println(fileData.isHave());
         if (fileData.isHave()) {
             return(this.filesAvailable.removeFromMyList(fileData));
         } else {

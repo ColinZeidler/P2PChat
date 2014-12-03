@@ -107,6 +107,9 @@ public class FileList {
         list.add(fileData);
     }
 
+    /////
+    //   Checks to see if the file has been advertised by this instance
+    //
     public synchronized boolean isAdvertisedByMe(FileData fileData) {
         for (FileData myFileData : myFiles)
             if (myFileData.equals(fileData))
@@ -115,8 +118,22 @@ public class FileList {
         return (false);
     }
 
+    /////
+    //   Checks to see if the file has been advertised by a peer, if not knowing the user
+    //
     public synchronized boolean isAdvertisedByUser(FileData fileData) {
         for (User user : Model.getInstance().getUserList())
+            if (isAdvertisedByUser(user, fileData))
+                return (true);
+
+        return (false);
+    }
+
+    /////
+    //   Checks to see if the file has been advertised by a peer, if knowing the user
+    //
+    public synchronized boolean isAdvertisedByUser(User user, FileData fileData) {
+        if(userFiles.get(user) != null)
             for (FileData userFileData : userFiles.get(user))
                 if (userFileData.equals(fileData))
                     return (true);
@@ -124,11 +141,18 @@ public class FileList {
         return (false);
     }
 
-    public synchronized boolean isAdvertisedByUser(User user, FileData fileData) {
-        for (FileData userFileData : userFiles.get(user))
-            if (userFileData.equals(fileData))
-                return (true);
+    /////
+    //   Removes the file from the list, returns false if file is not within the list
+    //
+    private synchronized boolean remove(List<FileData> list, FileData fileData) {
+        ListIterator<FileData> iterator = list.listIterator();
 
+        while (iterator.hasNext()) {
+            if (iterator.next().equals(fileData)) {
+                iterator.remove();
+                return (true);
+            }
+        }
         return (false);
     }
 
@@ -140,15 +164,8 @@ public class FileList {
         for (User user : userFiles.keySet()) {
             List<FileData> fdv = userFiles.get(user);
 
-            if (fdv.contains(fileData)) {
-                fdv.remove(fileData);
-                if (fdv.isEmpty()) {
-                    userFiles.remove(user);
-                } else {
-                    userFiles.put(user, fdv);
-                }
+            if (remove(fdv, fileData))
                 return (true);
-            }
         }
         return (false);
     }
@@ -167,13 +184,7 @@ public class FileList {
     /////
     //   Removes a file from the list of files the local user is advertising
     //
-    public synchronized boolean removeFromMyList(FileData fileData) {
-        if (myFiles.contains(fileData)) {
-            myFiles.remove(fileData);
-            return (true);
-        }
-        return (false);
-    }
+    public synchronized boolean removeFromMyList(FileData fileData) { return (remove(myFiles, fileData)); }
 
     /////
     //   Returns a text list of the files advertised, both that the user is advertising and that

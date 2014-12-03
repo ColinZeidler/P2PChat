@@ -124,7 +124,6 @@ public class Controller {
                                 break;
                             case Model.fileRemoveCode:
                                 String remInfo = new String(data.getBytes());
-                                //fileInfo = new String(data.getBytes()); // TODO sort this out
                                 String removerInfo = remInfo.substring(0, remInfo.indexOf(FileData.SPLIT_STR));
                                 remInfo = remInfo.substring(remInfo.indexOf("\n") + 1, remInfo.length());
                                 FileData removeFile = new FileData(remInfo);
@@ -133,10 +132,10 @@ public class Controller {
                                     if (myModel.removeFile(removeFile)) {
                                         myModel.addMessage(removerInfo + "File no longer advertised: " + removeFile.getFileName());
                                     } else {
-                                        myModel.addMessage(removerInfo + "Failed to remove advertisement on file!");
+                                        myModel.addMessage(removerInfo + "Failed to remove advertisement on file! Not Removed");
                                     }
                                 } else {
-                                    myModel.addMessage(removerInfo + "Failed to remove advertisement on file!");
+                                    myModel.addMessage(removerInfo + "Failed to remove advertisement on file! Invalid");
                                 }
                                 myView.update();
                                 break;
@@ -356,6 +355,32 @@ public class Controller {
             public void actionPerformed(ActionEvent e) {
                 GetFileDialog removeFileDialog = new GetFileDialog(myView, "Remove advertisement",
                         true, myModel.getFilesAvailable().getLocalFiles());
+                FileData fileData = removeFileDialog.getFileSelected();
+
+                if (Model.getInstance().removeFile(fileData)) {
+                    System.out.println(myModel.printFiles());
+
+                    // Sends a notification that the file has been removed
+
+                    String message = myModel.getMyName();
+                    message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
+
+                    myModel.addMessage(message + " File Removed: " + fileData.getFileName());
+                    myView.update();
+
+                    message += "\n" + fileData.getSendDataString();
+
+                    Packet packet = new Packet(Model.fileRemoveCode, message);
+                    for (User user : myModel.getUserList()) {
+                        try {
+                            user.writePacket(packet);
+                        } catch (IOException err) {
+                            err.printStackTrace();
+                        }
+                    }
+                } else {
+                    System.out.println("File could not be removed");
+                }
             }
         };
     }
