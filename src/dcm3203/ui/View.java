@@ -12,12 +12,12 @@ import java.awt.event.*;
  * Created by Colin on 2014-10-28.
  */
 public class View extends JFrame{
-    private Model myModel;
-    private Controller myController;
+    private Model       myModel;
+    private Controller  myController;
 
-    private JTextArea chatLog;
+    private JTextArea   chatLog;
     private JList<User> userJList;
-    private JTextField messageBar;
+    private JTextField  messageBar;
 
     private final int   VIEW_MIN_WIDTH = 750;
     private final int   VIEW_MIN_HEIGHT = 600;

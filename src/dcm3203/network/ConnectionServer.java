@@ -14,12 +14,12 @@ import java.net.Socket;
  * Handles incoming connections, from users that wish to join the room
  */
 public class ConnectionServer implements Runnable{
-    private int port;
-    private Model myModel;
-    private View myView;
-    private ServerSocket socket;
+    private int             port;
+    private Model           myModel;
+    private View            myView;
+    private ServerSocket    socket;
 
-    private boolean running;
+    private boolean         running;
 
     public ConnectionServer(int port, View view) {
         this.port = port;
