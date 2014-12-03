@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.ByteOrder;
 
 /**
  * Created by Colin on 2014-10-29.
@@ -48,8 +49,8 @@ public class User {
      */
     public void writePacket(Packet packet) throws IOException{
         //TEMP
-        sendStream.writeInt(packet.getID());
-        sendStream.writeInt(packet.getDataLength());
+        sendStream.writeInt(dealWithByteOrder(packet.getID()));
+        sendStream.writeInt(dealWithByteOrder(packet.getDataLength()));
         sendStream.write(packet.getBytes());
     }
 
@@ -60,11 +61,11 @@ public class User {
      */
     public Packet readPacket() throws IOException{
         if(receiveStream.available() > 3) {
-            int id = receiveStream.readInt();
+            int id = dealWithByteOrder(receiveStream.readInt());
 //            if(id == -1) {
 //                //End of file. PANIC!
 //            }
-            int size = receiveStream.readInt();
+            int size = dealWithByteOrder(receiveStream.readInt());
             byte[] data = new byte[size];
 
             int off = 0;
@@ -77,6 +78,12 @@ public class User {
         }
         return null;
 
+    }
+
+    private static int dealWithByteOrder(int integer) {
+        if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN)
+            integer = Integer.reverseBytes(integer);
+        return (integer);
     }
 
     @Override
