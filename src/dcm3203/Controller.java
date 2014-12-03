@@ -115,7 +115,7 @@ public class Controller {
                                     myModel.addMessage(senderInfo + "File advertisement: " + newAdFile.getFileName());
                                     myModel.addFile(newAdFile);
                                 } else {
-                                    myModel.addMessage(senderInfo + "Failed to advertise file!");
+                                    myModel.addMessage(senderInfo + "Failed to advertise file! Invalid file!");
                                 }
                                 System.out.println(myModel.printFiles());
                                 myView.update();
@@ -132,10 +132,10 @@ public class Controller {
                                     if (myModel.removeFile(removeFile)) {
                                         myModel.addMessage(removerInfo + "File no longer advertised: " + removeFile.getFileName());
                                     } else {
-                                        myModel.addMessage(removerInfo + "Failed to remove advertisement on file! Not Removed");
+                                        myModel.addMessage(removerInfo + "Failed to remove advertisement on file! Not Removed!");
                                     }
                                 } else {
-                                    myModel.addMessage(removerInfo + "Failed to remove advertisement on file! Invalid");
+                                    myModel.addMessage(removerInfo + "Failed to remove advertisement on file! Invalid file!");
                                 }
                                 myView.update();
                                 break;
@@ -347,6 +347,19 @@ public class Controller {
                 }
             }
         };
+    }
+
+    public ActionListener getFileTransferRequestListener() {
+        return (new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GetFileDialog removeFileDialog = new GetFileDialog(myView, "Request file",
+                        true, myModel.getFilesAvailable().getUserFiles());
+                FileData fileData = removeFileDialog.getFileSelected();
+
+                // TODO add functionality to send the transfer request
+            }
+        });
     }
 
     public ActionListener getRemoveFileListener() {
