@@ -39,7 +39,7 @@ import java.util.ListIterator;
  *
  */
 public class FileList {
-    private Map<User, List<FileData>> userFiles;   //  The list of files that the other users are advertising
+    private Map<User, List<FileData>> userFiles;      //  The list of files that the other users are advertising
     private List<FileData> myFiles;                   //  The files that the current user is advertising
 
     FileList() {
@@ -81,7 +81,20 @@ public class FileList {
     /////
     //   Gives a map containing the names of local files
     //
-    public synchronized Map<User, List<FileData>> getUserFiles() { return (userFiles); }
+    public synchronized Map<User, List<FileData>> getUserFileMap() { return (userFiles); }
+
+    /////
+    //   Returns a list with all the file advertisements of peers
+    //
+    public synchronized List<FileData> getUserFiles() {
+        List<FileData> returnList = new LinkedList<FileData>();
+
+        for (User user : Model.getInstance().getUserList())
+            if(userFiles.get(user) != null)
+                insertToList(returnList, userFiles.get(user));
+
+        return (returnList);
+    }
 
     /////
     //   Gives a list of all files from a specified user
@@ -105,6 +118,15 @@ public class FileList {
             }
         }
         list.add(fileData);
+    }
+
+    /////
+    //   Used to insert entire lists into another list
+    //
+    private synchronized void insertToList(List<FileData> list, List<FileData> addList) {
+        if (!addList.isEmpty())
+            for (FileData fileData : addList)
+                insertToList(list, fileData);
     }
 
     /////
