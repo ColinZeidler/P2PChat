@@ -319,8 +319,8 @@ public class Controller {
 
                             // Sends the file advertisement
 
-                            String message = myModel.getMyName();
-                            message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
+                            String message = new SimpleDateFormat("[HH:mm:ss] ").format(Calendar.getInstance().getTime());
+                            message += myModel.getMyName() + ": ";
 
                             myModel.addMessage(message + " Advertised: " + fileData.getFileName());
                             myView.update();
@@ -375,8 +375,8 @@ public class Controller {
 
                     // Sends a notification that the file has been removed
 
-                    String message = myModel.getMyName();
-                    message += new SimpleDateFormat(" [HH:mm:ss]: ").format(Calendar.getInstance().getTime());
+                    String message = new SimpleDateFormat("[HH:mm:ss] ").format(Calendar.getInstance().getTime());
+                    message += myModel.getMyName() + ": ";
 
                     myModel.addMessage(message + " File Removed: " + fileData.getFileName());
                     myView.update();
