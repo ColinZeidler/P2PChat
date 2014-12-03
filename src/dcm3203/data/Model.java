@@ -8,12 +8,12 @@ import java.util.Vector;
  * Created by Colin on 2014-10-28.
  */
 public class Model {
-    private final ArrayDeque<String> messageHistory;
-    private int maxMessages = 750;
-    private final Vector<User> userList;
-    private static Model instance;
-    private String myName;
-    private FileList filesAvailable;
+    private final ArrayDeque<String>    messageHistory;
+    private int                         maxMessages = 750;
+    private final Vector<User>          userList;
+    private static Model                instance;
+    private String                      myName;
+    private FileList                    filesAvailable;
 
     public static final int textCode = 0;
     public static final int connectCode = 3;
