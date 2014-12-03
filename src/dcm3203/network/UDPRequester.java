@@ -10,7 +10,8 @@ import java.util.Vector;
  * Created by Michael on 24/11/2014.
  *
  * UDPRequester
- *      This class sends out the UDP requests to all on the local network
+ *      This class sends out the UDP requests to all on the local network. Only
+ *    those in a chat will be able to respond to the request.
  *
  *      USE:
  *          Start the thread and use terminate() to end the thread safely

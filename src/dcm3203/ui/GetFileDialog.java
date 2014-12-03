@@ -12,7 +12,11 @@ import javax.swing.*;
 /**
  * Created by Michael on 01/12/2014.
  *
- * GetFileDialog
+ *  GetFileDialog
+ *      This dialog is used to obtain a file from the list specified on construction. Used in
+ *    two different cases in the program, once for removing file advertisements, and the other
+ *    when requesting a file for transfer.
+ *
  *      Use: Make new dialog, will do the work to get file from the list
  *          After call getFileSelected which returns the selected file
  *
@@ -20,9 +24,9 @@ import javax.swing.*;
 
 public class GetFileDialog extends JDialog {
 
-    private FileData fileSelected;  //  The selected file
+    private FileData                fileSelected;                         //  The selected file
 
-    private static final String[] NO_FILES = {"No Files Advertised"};
+    private static final String[]   NO_FILES = {"No Files Advertised"};   //  If no files are advertised
 
     public GetFileDialog(Frame owner, String title, boolean modal, final List<FileData> fileList) {
         super(owner, title, modal);
@@ -72,9 +76,8 @@ public class GetFileDialog extends JDialog {
             String[] fileNames = new String[fileList.size()];
             ListIterator<FileData> it = fileList.listIterator();
 
-            for (int i = 0; i < fileNames.length && it.hasNext(); ++i) {
+            for (int i = 0; i < fileNames.length && it.hasNext(); ++i)
                 fileNames[i] = it.next().getFileName();
-            }
 
             fileJList.setListData(fileNames);
         }

@@ -39,8 +39,8 @@ import java.util.ListIterator;
  *
  */
 public class FileList {
-    private Map<User, List<FileData>> userFiles;      //  The list of files that the other users are advertising
-    private List<FileData> myFiles;                   //  The files that the current user is advertising
+    private Map<User, List<FileData>>   userFiles;      //  The list of files that the other users are advertising
+    private List<FileData>              myFiles;        //  The files that the current user is advertising
 
     FileList() {
         userFiles = new HashMap<User, List<FileData>>();
@@ -102,7 +102,7 @@ public class FileList {
     public synchronized List<FileData> getUserFiles(User user) { return (userFiles.get(user)); }
 
     /////
-    //   This function inserts a FileData and inserts lexicographically to prevent sorting later
+    //   This function inserts a FileData and in lexicographically to prevent having to sorting later
     //
     private synchronized void insertToList(List<FileData> list, FileData fileData) {
         if (!list.isEmpty()) {

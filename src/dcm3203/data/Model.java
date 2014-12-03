@@ -95,12 +95,21 @@ public class Model {
         }
     }
 
+    /////
+    //   Returns the FileList used
+    //
     public FileList getFilesAvailable() { return (filesAvailable); }
 
+    /////
+    //   Adds FileData to the appropriate list from a FileDataString
+    //
     public boolean addFile(String fileDataString) {
         return (addFile(new FileData(fileDataString)));
     }
 
+    /////
+    //   Adds FileData to the appropriate list
+    //
     public boolean addFile(FileData fileData) {
         if (fileData.isHave()) {
             if (!this.filesAvailable.isAdvertisedByMe(fileData)) {
@@ -122,12 +131,17 @@ public class Model {
         return (false);
     }
 
+    /////
+    //   Removes the FileData created from the FileData String
+    //
     public boolean removeFile(String fileDataString) {
         return (removeFile(new FileData(fileDataString)));
     }
 
+    /////
+    //   Removes the file given from the appropriate list
+    //
     public boolean removeFile(FileData fileData) {
-        System.out.println(fileData.isHave());
         if (fileData.isHave()) {
             return(this.filesAvailable.removeFromMyList(fileData));
         } else {
@@ -135,18 +149,30 @@ public class Model {
         }
     }
 
+    /////
+    //   Removes all the file advertisements associated with the given user
+    //
     public boolean removeUserFiles(User user) {
         return(this.filesAvailable.remove(user));
     }
 
+    /////
+    //   Prints the file names stored in the FileList
+    //
     public String printFiles() {
         return (filesAvailable.toString());
     }
 
+    /////
+    //   Returns the name of the user
+    //
     public String getMyName() {
         return myName;
     }
 
+    /////
+    //   Sets the name of the user
+    //
     public void setMyName(String myName) {
         this.myName = myName;
     }

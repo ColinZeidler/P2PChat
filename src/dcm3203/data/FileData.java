@@ -44,7 +44,7 @@ public class FileData implements Comparator<FileData>, Comparable<FileData> {
 
     private boolean valid;      //  Makes sure that the data is not incomplete or invalid
 
-    static public final String SPLIT_STR = "\n";
+    static public final String SPLIT_STR = "\n";    //  The character used for separating in the FileData String
 
     /////
     //   Sets up the class from a FileData in String format
@@ -53,11 +53,13 @@ public class FileData implements Comparator<FileData>, Comparable<FileData> {
 
     /////
     //   Constructor to set up each variable
+    //      Throws an error if file path in valid, catches and
+    //     sets internal valid check to false
     //
     public FileData(String name, String location) {
         try {
             File temp = new File(location);
-            if (!temp.exists()) throw new Exception("Not a valid path name");
+            if (!temp.exists()) throw new Exception("Not a valid path");
 
             this.name = name;
             this.location = location;
@@ -75,7 +77,7 @@ public class FileData implements Comparator<FileData>, Comparable<FileData> {
     //      - First compares file name
     //      - Then compares location
     //      - Then compares size
-    //      - Then have value
+    //      - Then the have value
     //
     public int compare(FileData a, FileData b) {
         int cVal;
@@ -83,12 +85,10 @@ public class FileData implements Comparator<FileData>, Comparable<FileData> {
         if (a == null) return (Integer.MAX_VALUE);
         if (b == null) return (Integer.MIN_VALUE);
 
-        if ((cVal = a.name.compareToIgnoreCase(b.name)) == 0) {
-            if ((cVal = a.location.compareToIgnoreCase(b.location)) == 0) {
+        if ((cVal = a.name.compareToIgnoreCase(b.name)) == 0)
+            if ((cVal = a.location.compareToIgnoreCase(b.location)) == 0)
                 if ((cVal = Long.compare(a.fileSize, b.fileSize)) == 0)
                     cVal = (a.have ? 1 : 0) - (b.have ? 1 : 0);
-            }
-        }
 
         return (cVal);
     }
@@ -161,5 +161,4 @@ public class FileData implements Comparator<FileData>, Comparable<FileData> {
         }
         return (valid);
     }
-
 }

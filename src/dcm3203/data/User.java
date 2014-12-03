@@ -14,10 +14,10 @@ import java.nio.ByteOrder;
  * handles the sending of messages to the User this object represents.
  */
 public class User {
-    private String name;
-    private Socket connection;
-    private DataOutputStream sendStream;
-    private DataInputStream receiveStream;
+    private String              name;
+    private Socket              connection;
+    private DataOutputStream    sendStream;
+    private DataInputStream     receiveStream;
 
     public User(String name, Socket connection) throws IOException {
         this.name = name;
@@ -80,6 +80,9 @@ public class User {
 
     }
 
+    /////
+    //   Added to deal with Big and Little Endian problem
+    //
     private static int dealWithByteOrder(int integer) {
         if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN)
             integer = Integer.reverseBytes(integer);

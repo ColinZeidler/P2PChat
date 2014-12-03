@@ -35,17 +35,22 @@ import java.util.Vector;
  * Updates the data Model, and then tells the View class to update
  */
 public class Controller {
-    private View myView;
-    private Model myModel;
-    private ConnectDialog myConnect;
-    private final int connectionPort = 60023, udpPort = 60022;
-    private final long loopPauseTime = 25;  //number of milliseconds to sleep for in each loop
-    private final long hbMax = 10000;
-    private long heartbeatTime = hbMax;
-    final String resetError = "connection reset";
 
-    private boolean connected;
-    private boolean running;
+    private boolean         connected;                  //  Used for determining if a connection is being kept
+    private boolean         running;                    //  Used for determining if the program should be running
+
+    private final int       connectionPort  = 60023;
+    private final int       udpPort         = 60022;
+
+    private final long      loopPauseTime   = 25;       //number of milliseconds to sleep for in each loop
+    private final long      hbMax           = 10000;
+    private long            heartbeatTime   = hbMax;
+
+    private View            myView;
+    private Model           myModel;
+    private ConnectDialog   myConnect;
+
+    private final String    resetError      = "connection reset";
 
     /**
      * Entry method
@@ -358,6 +363,7 @@ public class Controller {
                 FileData fileData = removeFileDialog.getFileSelected();
 
                 // TODO add functionality to send the transfer request
+                //    You can get the file path from fileData.getLocation()
             }
         });
     }
