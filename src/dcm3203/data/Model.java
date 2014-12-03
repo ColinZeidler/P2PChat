@@ -111,10 +111,10 @@ public class Model {
             synchronized (userList) {
                 for (User user : userList) {
                     if (user.getName().equals(fileData.getFileLocation())) {
-                        if (this.filesAvailable.isAdvertisedByUser(user, fileData))
-                            return (false);
-                        this.filesAvailable.add(user, fileData);
-                        return (true);
+                        if (!this.filesAvailable.isAdvertisedByUser(user, fileData)) {
+                            this.filesAvailable.add(user, fileData);
+                            return (true);
+                        }
                     }
                 }
             }
