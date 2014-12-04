@@ -49,8 +49,8 @@ public class User {
      */
     public void writePacket(Packet packet) throws IOException{
         //TEMP
-        sendStream.writeInt(dealWithByteOrder(packet.getID()));
-        sendStream.writeInt(dealWithByteOrder(packet.getDataLength()));
+        sendStream.writeInt(packet.getID());
+        sendStream.writeInt(packet.getDataLength());
         sendStream.write(packet.getBytes());
     }
 
@@ -61,11 +61,11 @@ public class User {
      */
     public Packet readPacket() throws IOException{
         if(receiveStream.available() > 3) {
-            int id = dealWithByteOrder(receiveStream.readInt());
+            int id = receiveStream.readInt();
 //            if(id == -1) {
 //                //End of file. PANIC!
 //            }
-            int size = dealWithByteOrder(receiveStream.readInt());
+            int size = receiveStream.readInt();
             byte[] data = new byte[size];
 
             int off = 0;
@@ -78,15 +78,6 @@ public class User {
         }
         return null;
 
-    }
-
-    /////
-    //   Added to deal with Big and Little Endian problem
-    //
-    private static int dealWithByteOrder(int integer) {
-        if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN)
-            integer = Integer.reverseBytes(integer);
-        return (integer);
     }
 
     @Override
