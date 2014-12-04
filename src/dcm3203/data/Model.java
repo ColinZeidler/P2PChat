@@ -142,11 +142,12 @@ public class Model {
     //   Removes the file given from the appropriate list
     //
     public boolean removeFile(FileData fileData) {
-        if (fileData.isHave()) {
-            return(this.filesAvailable.removeFromMyList(fileData));
-        } else {
-            return(this.filesAvailable.remove(fileData));
+        if (fileData != null) {
+            if (fileData.isHave()) {
+                return (this.filesAvailable.removeFromMyList(fileData));
+            }
         }
+        return (false);
     }
 
     /////
