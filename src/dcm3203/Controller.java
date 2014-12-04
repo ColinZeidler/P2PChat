@@ -344,7 +344,6 @@ public class Controller {
                             System.out.println("File already advertised");
                         }
                     } else {
-                        // file is not valid?
                         System.out.println("File is not valid!");
                     }
                 } else {

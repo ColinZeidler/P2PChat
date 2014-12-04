@@ -1,5 +1,6 @@
 package dcm3203.network;
 
+import dcm3203.data.FileData;
 import dcm3203.data.Model;
 import dcm3203.data.Packet;
 import dcm3203.data.User;
@@ -8,6 +9,8 @@ import dcm3203.ui.View;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 /**
  * Created by Colin on 2014-10-31.
  *
@@ -66,8 +69,19 @@ public class ConnectionServer implements Runnable{
                 }
 
                 //add user to user list
-                myModel.addUser(new User(name.trim(), newSocket));
+                User newUser = new User(name.trim(), newSocket);
+                myModel.addUser(newUser);
                 myView.update();
+
+                for (FileData fileData : myModel.getFilesAvailable().getLocalFiles()) {
+                    String message = new SimpleDateFormat("[HH:mm:ss] ").format(Calendar.getInstance().getTime());
+                    message += myModel.getMyName() + ": ";
+
+                    message += "\n" + fileData.getSendDataString();
+
+                    Packet packet = new Packet(Model.fileAdCode, message);
+                    newUser.writePacket(packet);
+                }
             }
         } catch (IOException e) {
 //            e.printStackTrace();
