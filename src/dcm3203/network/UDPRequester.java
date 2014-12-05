@@ -50,6 +50,8 @@ public class UDPRequester implements Runnable {
         Vector<String> foundIPs = new Vector<String>();     //  This stores the currently found IPs
         running = true;                                     //  Sets to true so the while will run until terminated
 
+        owner.updateList(foundIPs);     //  Just to update the text in the displayed list
+
         try {
 
             /////
