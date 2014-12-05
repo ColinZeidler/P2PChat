@@ -10,6 +10,7 @@ import java.awt.event.*;
 
 /**
  * Created by Colin on 2014-10-28.
+ *
  */
 public class View extends JFrame{
     private Model       myModel;
@@ -19,9 +20,6 @@ public class View extends JFrame{
     private JList<User> userJList;
     private JTextField  messageBar;
 
-    private final int   VIEW_MIN_WIDTH = 750;
-    private final int   VIEW_MIN_HEIGHT = 600;
-
     public View(Controller controller) {
         myModel = Model.getInstance();
         myController = controller;
@@ -29,6 +27,9 @@ public class View extends JFrame{
     }
 
     private void initDisplay() {
+        final int   VIEW_MIN_WIDTH = 750;
+        final int   VIEW_MIN_HEIGHT = 600;
+
         setTitle("P2PChat");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); //exit the program when the window is closed.
         setSize(VIEW_MIN_WIDTH, VIEW_MIN_HEIGHT);

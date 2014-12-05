@@ -15,13 +15,13 @@ public class Model {
     private String                      myName;
     private FileList                    filesAvailable;
 
-    public static final int textCode = 0;
-    public static final int connectCode = 3;
-    public static final int disconnectCode = 5;
-    public static final int fileAdCode = 1;
-    public static final int fileReqCode = 2;
-    public static final int fileRemoveCode = 4;
-    public static final int heartbeatCode = 6;
+    public static final int connectCode      = 3;
+    public static final int disconnectCode   = 5;
+    public static final int fileAdCode       = 1;
+    public static final int fileReqCode      = 2;
+    public static final int fileRemoveCode   = 4;
+    public static final int heartbeatCode    = 6;
+    public static final int textCode         = 0;
 
     public Model() {
         messageHistory = new ArrayDeque<String>();
