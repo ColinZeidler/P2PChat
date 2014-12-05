@@ -33,11 +33,13 @@ public class ConnectDialog extends JDialog{
     //   UDPRequester and other related
     //      Another thread is run to find IPs in background
     //
-    private boolean             runningUDP = false;
-    private final String        START_UDP_SEARCH = "Search For Peers";
-    private final String        STOP_UDP_SEARCH = "Stop Search";
+    private boolean             runningUDP          = false;
     private Thread              requesterThread;
     private UDPRequester        requester;
+
+    private final String        NO_UDP_SEARCH       = "Search Not Preformed";
+    private final String        START_UDP_SEARCH    = "Search For Peers";
+    private final String        STOP_UDP_SEARCH     = "Stop Search";
 
     /////
     //   All the components
@@ -45,7 +47,6 @@ public class ConnectDialog extends JDialog{
     private JButton             cancelButton;           //  For quitting the app
     private JButton             createRoomButton;       //  For creating a room for others to connect to
     private JButton             infoOnNameButton;       //  For getting the info on name format
-    private JButton             joinListedIP;           //  For joining an IP from the list of local IPs
     private JButton             joinEnteredIP;          //  For joining an IP entered by the user
     private JButton             searchLocalIP;          //  For getting the list of local IPs
     private JLabel              enterNameLabel;
@@ -61,7 +62,6 @@ public class ConnectDialog extends JDialog{
     private ActionListener      createRoomAction;   //  The handler for creating a room for others to connect to
     private ActionListener      enterIPAction;      //  The handler for an IP entered by user
     private ActionListener      infoOnNameAction;   //  The handler for getting info on the format of the name
-    private ActionListener      listIPAction;       //  The handler for an IP found by discovery
     private ActionListener      searchAction;       //  The handler to search for peers
     private ComponentAdapter    resizeAdapter;      //  Not implemented (as not needed to resize)
     private MouseAdapter        listIPAdapter;      //  The handle for clicking on the list
@@ -194,13 +194,6 @@ public class ConnectDialog extends JDialog{
             }
         };
 
-        listIPAction = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listIPCheck(listIP.getSelectedValue());
-            }
-        };
-
         searchAction = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -235,7 +228,9 @@ public class ConnectDialog extends JDialog{
     //   Sets up the initial list view
     //
     private void initList() {
-        updateList(new Vector<String>());
+        Vector<String> newList = new Vector<String>();
+        newList.add(NO_UDP_SEARCH);
+        updateList(newList);
     }
 
     /////
@@ -269,7 +264,7 @@ public class ConnectDialog extends JDialog{
         listIP.addMouseListener(listIPAdapter);
         this.add(listPane);
 
-        enterIP = new JTextField("[Enter an IP Address]");
+        enterIP = new JTextField("[Enter or Select an IP Address]");
         this.add(enterIP);
 
         /////
@@ -290,10 +285,6 @@ public class ConnectDialog extends JDialog{
         joinEnteredIP = new JButton("Join Entered IP");
         joinEnteredIP.addActionListener(enterIPAction);
         add(joinEnteredIP);
-
-        joinListedIP = new JButton("Join Listed IP");
-        joinListedIP.addActionListener(listIPAction);
-        add(joinListedIP);
 
         searchLocalIP = new JButton(START_UDP_SEARCH);
         searchLocalIP.addActionListener(searchAction);
@@ -351,19 +342,9 @@ public class ConnectDialog extends JDialog{
     //
     private void listClicked() {
         listIP.setSelectedIndex(listIP.getSelectedIndex());
-    }
 
-    /////
-    //   Ensures if the list button is clicked with an invalid IP it does not use it
-    //
-    private void listIPCheck(String ip) {
-        if(ip == null) {
-            JOptionPane.showMessageDialog(this, "No IP selected from list!", "Warning!", JOptionPane.WARNING_MESSAGE);
-        } else if (ip.equals(NO_PEERS_FOUND)) {
-            JOptionPane.showMessageDialog(this, "No IPs in the list!", "Warning!", JOptionPane.WARNING_MESSAGE);
-        } else {
-            enterIPCheck(ip);
-        }
+        if (isValidIP(listIP.getSelectedValue()))
+            enterIP.setText(listIP.getSelectedValue());
     }
 
     /////
@@ -395,7 +376,8 @@ public class ConnectDialog extends JDialog{
     private void selectIP(String ip) {
         try {
             if(!control.setupConnection(ip)) {
-                JOptionPane.showMessageDialog(this, "Error: Connection was not successful!", "Something went wrong!", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error: Connection was not successful!",
+                        "Something went wrong!", JOptionPane.ERROR_MESSAGE);
             } else {
                 if (requester != null)
                     killSearch();
@@ -403,7 +385,8 @@ public class ConnectDialog extends JDialog{
             }
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error: Connection was not successful!", "Something went wrong!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error: Connection was not successful!",
+                    "Something went wrong!", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -425,10 +408,12 @@ public class ConnectDialog extends JDialog{
     //   Takes the list and updates the list to display the found IPs
     //
     public void updateList(Vector<String> listData) {
-        if (listData.isEmpty())
-            listData.add(NO_PEERS_FOUND);
-
-        listIP.setListData(listData);
+        if (listData.isEmpty()) {
+            String[] noPeers = {NO_PEERS_FOUND};
+            listIP.setListData(noPeers);
+        } else {
+            listIP.setListData(listData);
+        }
     }
 
     /////
@@ -441,8 +426,8 @@ public class ConnectDialog extends JDialog{
 
         enterNameField.setLocation(enterNameLabel.getLocation().x + CDIALOG_NAME_LABEL_WIDTH + CDIALOG_PAD,
                 enterNameLabel.getLocation().y);
-        enterNameField.setSize(getWidth() - enterNameField.getLocation().x - CDIALOG_PAD*3 - (int)CDIALOG_BUTTON.getWidth(),
-                (int)CDIALOG_BUTTON.getHeight());
+        enterNameField.setSize(getWidth() - enterNameField.getLocation().x - CDIALOG_PAD*3 -
+                (int)CDIALOG_BUTTON.getWidth(), (int)CDIALOG_BUTTON.getHeight());
 
         listPane.setLocation(CDIALOG_PAD, CDIALOG_PAD*3 + (int)CDIALOG_BUTTON.getHeight()*2);
         listPane.setSize((int)CDIALOG.getWidth() - (int)CDIALOG_BUTTON.getWidth() - CDIALOG_PAD*4,
@@ -467,11 +452,6 @@ public class ConnectDialog extends JDialog{
         searchLocalIP.setLocation(infoOnNameButton.getLocation().x,
                 (CDIALOG_BUTTON_PAD)*3);
         searchLocalIP.setSize(CDIALOG_BUTTON);
-
-        joinListedIP.setLocation(infoOnNameButton.getLocation().x,
-                (CDIALOG_BUTTON_PAD)*4);
-        joinListedIP.setSize((int)CDIALOG_BUTTON.getWidth(),
-                (int)CDIALOG_BUTTON.getHeight());
 
         joinEnteredIP.setLocation(infoOnNameButton.getLocation().x,
                 (int)CDIALOG.getHeight() - (CDIALOG_BUTTON_PAD)*3);
