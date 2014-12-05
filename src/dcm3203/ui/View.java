@@ -29,7 +29,7 @@ public class View extends JFrame{
     }
 
     private void initDisplay() {
-        setTitle("Application name");
+        setTitle("P2PChat");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); //exit the program when the window is closed.
         setSize(VIEW_MIN_WIDTH, VIEW_MIN_HEIGHT);
         setLocation(100, 100);
