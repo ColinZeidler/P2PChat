@@ -198,8 +198,16 @@ public class Controller {
                 }
             }
 
-            udpDiscoveryHandle.terminate();
-            connectionServer.terminate();
+            try {
+                udpDiscoveryHandle.terminate();
+                connectionServer.terminate();
+            } catch (NullPointerException e) {
+                //   Believe this only happens when two instances are on the same computer
+
+                System.out.println(e.getMessage());
+                System.exit(1);
+            }
+
             try {
                 discoverHandle.join();
                 inConnect.join();
