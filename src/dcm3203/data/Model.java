@@ -145,6 +145,8 @@ public class Model {
         if (fileData != null) {
             if (fileData.isHave()) {
                 return (this.filesAvailable.removeFromMyList(fileData));
+            } else {
+                return (this.filesAvailable.remove(fileData));
             }
         }
         return (false);
