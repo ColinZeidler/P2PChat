@@ -157,10 +157,16 @@ public class Controller {
                                 System.out.println("saving file to disk: " + fname);
                                 break;
                             case Model.fileStartCode:
-                                myModel.saveFileStart(new String(data.getBytes()));
+                                String name = new String(data.getBytes());
+                                myModel.saveFileStart(name);
+                                myModel.addMessage("Downloading file: '"+ name + "'");
+                                myView.update();
                                 break;
                             case Model.fileEndCode:
-                                myModel.saveFileEnd(new String(data.getBytes()));
+                                String nameEnd = new String(data.getBytes());
+                                myModel.saveFileEnd(nameEnd);
+                                myModel.addMessage("Download of '"+ nameEnd + "' complete");
+                                myView.update();
                                 break;
                             case Model.fileRemoveCode:
                                 String remInfo = new String(data.getBytes());
