@@ -51,6 +51,7 @@ public class User {
         //TEMP
         sendStream.writeInt(packet.getID());
         sendStream.writeInt(packet.getDataLength());
+        System.out.println("dataLength: " + packet.getDataLength());
         sendStream.write(packet.getBytes());
     }
 
@@ -66,6 +67,7 @@ public class User {
 //                //End of file. PANIC!
 //            }
             int size = receiveStream.readInt();
+            System.out.println("ID = " + id + " Size = " + size);
             byte[] data = new byte[size];
 
             int off = 0;

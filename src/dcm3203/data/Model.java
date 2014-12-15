@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
+import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -17,6 +18,8 @@ public class Model {
     private static Model                instance;
     private String                      myName;
     private FileList                    filesAvailable;
+    private HashMap<String,
+            FileOutputStream>           fileWriteMap;
 
     public static final int connectCode      = 3;
     public static final int disconnectCode   = 5;
@@ -24,6 +27,8 @@ public class Model {
     public static final int fileReqCode      = 2;
     public static final int fileRemoveCode   = 4;
     public static final int fileCode         = 7;
+    public static final int fileStartCode    = 8;
+    public static final int fileEndCode      = 9;
     public static final int heartbeatCode    = 6;
     public static final int textCode         = 0;
 
@@ -31,6 +36,7 @@ public class Model {
         messageHistory = new ArrayDeque<String>();
         userList = new Vector<User>();
         filesAvailable = new FileList();
+        fileWriteMap = new HashMap<String, FileOutputStream>();
     }
 
     public static Model getInstance() {
@@ -170,16 +176,38 @@ public class Model {
         return (filesAvailable.toString());
     }
 
+    public void saveFileStart(String name) {
+
+        try {
+            FileOutputStream fs = new FileOutputStream(name); //open file in append mode
+            fileWriteMap.put(name, fs);
+        } catch (FileNotFoundException e) {
+            System.out.println("unable to open file");
+            e.printStackTrace();
+        }
+    }
+
     /////
     //   Intakes a byte array and converts it into a file and saves it to disk
     //
-
     public void saveFile(byte[] bytes, String name){
+        FileOutputStream fs = fileWriteMap.get(name);
         try {
-            FileOutputStream fs = new FileOutputStream(name, true); //open file in append mode
             fs.write(bytes);
+        } catch(Exception ex){
+            System.out.println("Unable to write");
+            ex.printStackTrace();
+        }
+    }
+
+    public void saveFileEnd(String name) {
+        FileOutputStream fs = fileWriteMap.get(name);
+        try {
             fs.close();
-        } catch(Exception ex){};
+        } catch (IOException e) {
+            System.out.println("unable to close file");
+            e.printStackTrace();
+        }
     }
 
     /////

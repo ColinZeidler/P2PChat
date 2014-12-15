@@ -146,13 +146,21 @@ public class Controller {
                                 String fname;
                                 int bytePos = 0;
                                 for (int i = 0; i < data.getDataLength(); i++) {
-                                    if (data.getBytes()[i] == (byte)0)
+                                    if (data.getBytes()[i] == (byte)0) {
                                         bytePos = i;
+                                        break;
+                                    }
                                 }
                                 fname = new String(Arrays.copyOf(data.getBytes(), bytePos));
                                 fdata = Arrays.copyOfRange(data.getBytes(), bytePos+1, data.getDataLength());
                                 myModel.saveFile(fdata, fname);
-                                System.out.println("saving file to disk");
+                                System.out.println("saving file to disk: " + fname);
+                                break;
+                            case Model.fileStartCode:
+                                myModel.saveFileStart(new String(data.getBytes()));
+                                break;
+                            case Model.fileEndCode:
+                                myModel.saveFileEnd(new String(data.getBytes()));
                                 break;
                             case Model.fileRemoveCode:
                                 String remInfo = new String(data.getBytes());
