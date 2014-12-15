@@ -126,6 +126,41 @@ public class Controller {
                                 myView.update();
                                 break;
                             case Model.fileReqCode:
+                                String filei = new String(data.getBytes());
+                                String senderi = filei.substring(0, filei.indexOf(FileData.SPLIT_STR));
+                                System.out.println(senderi);
+                                filei = filei.substring(filei.indexOf("\n") + 1, filei.length());
+                                FileData newReqFile = new FileData(filei);
+
+                                if (newReqFile.isValid()){
+                                    myModel.addMessage(senderi + "File request: " + newReqFile.getFileName());
+                                    message = newReqFile.getFileName();
+                                    message += "\n" + myModel.getFileAsBytes(newReqFile).toString();
+                                    Packet packet = new Packet(myModel.fileCode, message);
+                                    for (User u : myModel.getUserList()) {
+                                        try {
+                                            if(u.getName().equals(senderi.substring(11,senderi.length() - 2))) {
+                                                //only send the file packet to the correct user
+                                                u.writePacket(packet);
+                                            }
+                                        } catch (IOException err) {
+                                            err.printStackTrace();
+                                        }
+                                    }
+                                } else {
+                                    myModel.addMessage(senderi + "Failed to request file! Invalid file!");
+                                }
+                                myView.update();
+                                break;
+                            case Model.fileCode:
+                                //save the file to disk
+                                String f = new String(data.getBytes());
+                                System.out.println(f);
+                                String fname = new String(f.substring(0,f.indexOf('\n')));
+                                String fdata = new String(f.substring(f.indexOf('\n') + 1, f.length()));
+                                myModel.saveFile(fdata, fname);
+                                System.out.println("saving file to disk");
+                                System.out.println(fdata);
                                 break;
                             case Model.fileRemoveCode:
                                 String remInfo = new String(data.getBytes());
@@ -371,6 +406,21 @@ public class Controller {
 
                 // TODO add functionality to send the transfer request
                 //    You can get the file path from fileData.getLocation()
+                String message = new SimpleDateFormat("[HH:mm:ss] ").format(Calendar.getInstance().getTime());
+                message += myModel.getMyName() + ": ";
+                myModel.addMessage(message + " Requesting File: " + fileData.getFileName());
+                myView.update();
+
+                message += "\n" + fileData.getSendDataString();
+
+                Packet packet = new Packet(Model.fileReqCode,message);
+                for (User user : myModel.getUserList()) {
+                    try {
+                        user.writePacket(packet);
+                    } catch (IOException err) {
+                        err.printStackTrace();
+                    }
+                }
             }
         });
     }

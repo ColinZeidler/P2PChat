@@ -1,6 +1,9 @@
 package dcm3203.data;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.Vector;
 
@@ -20,6 +23,7 @@ public class Model {
     public static final int fileAdCode       = 1;
     public static final int fileReqCode      = 2;
     public static final int fileRemoveCode   = 4;
+    public static final int fileCode         = 7;
     public static final int heartbeatCode    = 6;
     public static final int textCode         = 0;
 
@@ -164,6 +168,29 @@ public class Model {
     //
     public String printFiles() {
         return (filesAvailable.toString());
+    }
+
+    /////
+    //   Intakes a byte array and converts it into a file and saves it to disk
+    //
+
+    public void saveFile(String bytes, String name){
+        try {
+            FileOutputStream fs = new FileOutputStream(name);
+            fs.write(bytes.getBytes());
+            fs.close();
+        } catch(Exception ex){};
+    }
+
+    public byte[] getFileAsBytes(FileData fd){
+        File file = new File(fd.getFileLocation() + fd.getFileName());
+        byte[] bytes = new byte[(int) file.length()];
+        try {
+            FileInputStream fi = new FileInputStream(file);
+            fi.read(bytes);
+            fi.close();
+        } catch(Exception e){}
+        return bytes;
     }
 
     /////
