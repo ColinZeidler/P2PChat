@@ -26,7 +26,7 @@ public class SendFileThread implements Runnable {
 
     @Override
     public void run() {
-        byte[] bytes = new byte[4096];
+        byte[] bytes = new byte[16384];
         byte[] fileName = this.fileName.getBytes();
         Packet fileData;
         fileData = new Packet(Model.fileStartCode, fileName);
@@ -49,6 +49,12 @@ public class SendFileThread implements Runnable {
             }
         } catch(IOException e) {
             System.out.println("unable to read file");
+        } finally {
+            try {
+                fi.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         fileData = new Packet(Model.fileEndCode, fileName);
