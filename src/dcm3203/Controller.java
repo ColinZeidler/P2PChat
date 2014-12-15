@@ -5,6 +5,7 @@ import dcm3203.data.Model;
 import dcm3203.data.Packet;
 import dcm3203.data.User;
 import dcm3203.network.ConnectionServer;
+import dcm3203.network.SendFileThread;
 import dcm3203.network.UDPDiscoveryHandle;
 import dcm3203.ui.ConnectDialog;
 import dcm3203.ui.GetFileDialog;
@@ -19,10 +20,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Created by Colin on 2014-10-28.
@@ -126,41 +124,35 @@ public class Controller {
                                 myView.update();
                                 break;
                             case Model.fileReqCode:
-                                String filei = new String(data.getBytes());
-                                String senderi = filei.substring(0, filei.indexOf(FileData.SPLIT_STR));
-                                System.out.println(senderi);
-                                filei = filei.substring(filei.indexOf("\n") + 1, filei.length());
-                                FileData newReqFile = new FileData(filei);
-
-                                if (newReqFile.isValid()){
-                                    myModel.addMessage(senderi + "File request: " + newReqFile.getFileName());
-                                    message = newReqFile.getFileName();
-                                    message += "\n" + myModel.getFileAsBytes(newReqFile).toString();
-                                    Packet packet = new Packet(myModel.fileCode, message);
-                                    for (User u : myModel.getUserList()) {
-                                        try {
-                                            if(u.getName().equals(senderi.substring(11,senderi.length() - 2))) {
-                                                //only send the file packet to the correct user
-                                                u.writePacket(packet);
-                                            }
-                                        } catch (IOException err) {
-                                            err.printStackTrace();
-                                        }
+                                String fileName = new String(data.getBytes());
+                                FileData myFile = null;
+                                for (FileData file: myModel.getFilesAvailable().getLocalFiles()) {
+                                    if (file.getFileName().equals(fileName)) {
+                                        myFile = file;
+                                        break;
                                     }
-                                } else {
-                                    myModel.addMessage(senderi + "Failed to request file! Invalid file!");
                                 }
-                                myView.update();
+                                if (myFile == null) {
+                                    break;
+                                }
+                                //Start the file transfer
+                                SendFileThread sendFileThread = new SendFileThread(fileName, myFile.getFileLocation(), user);
+                                Thread fileTransfer = new Thread(sendFileThread);
+                                fileTransfer.start();
                                 break;
                             case Model.fileCode:
                                 //save the file to disk
-                                String f = new String(data.getBytes());
-                                System.out.println(f);
-                                String fname = new String(f.substring(0,f.indexOf('\n')));
-                                String fdata = new String(f.substring(f.indexOf('\n') + 1, f.length()));
+                                byte[] fdata;
+                                String fname;
+                                int bytePos = 0;
+                                for (int i = 0; i < data.getDataLength(); i++) {
+                                    if (data.getBytes()[i] == (byte)0)
+                                        bytePos = i;
+                                }
+                                fname = new String(Arrays.copyOf(data.getBytes(), bytePos));
+                                fdata = Arrays.copyOfRange(data.getBytes(), bytePos+1, data.getDataLength());
                                 myModel.saveFile(fdata, fname);
                                 System.out.println("saving file to disk");
-                                System.out.println(fdata);
                                 break;
                             case Model.fileRemoveCode:
                                 String remInfo = new String(data.getBytes());
@@ -404,21 +396,20 @@ public class Controller {
                         true, myModel.getFilesAvailable().getUserFiles());
                 FileData fileData = removeFileDialog.getFileSelected();
 
-                // TODO add functionality to send the transfer request
                 //    You can get the file path from fileData.getLocation()
                 String message = new SimpleDateFormat("[HH:mm:ss] ").format(Calendar.getInstance().getTime());
                 message += myModel.getMyName() + ": ";
                 myModel.addMessage(message + " Requesting File: " + fileData.getFileName());
                 myView.update();
 
-                message += "\n" + fileData.getSendDataString();
-
-                Packet packet = new Packet(Model.fileReqCode,message);
+                Packet packet = new Packet(Model.fileReqCode, fileData.getFileName());
                 for (User user : myModel.getUserList()) {
-                    try {
-                        user.writePacket(packet);
-                    } catch (IOException err) {
-                        err.printStackTrace();
+                    if (user.getName().equals(fileData.getFileLocation())) {
+                        try {
+                            user.writePacket(packet);
+                        } catch (IOException err) {
+                            err.printStackTrace();
+                        }
                     }
                 }
             }

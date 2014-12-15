@@ -174,23 +174,12 @@ public class Model {
     //   Intakes a byte array and converts it into a file and saves it to disk
     //
 
-    public void saveFile(String bytes, String name){
+    public void saveFile(byte[] bytes, String name){
         try {
-            FileOutputStream fs = new FileOutputStream(name);
-            fs.write(bytes.getBytes());
+            FileOutputStream fs = new FileOutputStream(name, true); //open file in append mode
+            fs.write(bytes);
             fs.close();
         } catch(Exception ex){};
-    }
-
-    public byte[] getFileAsBytes(FileData fd){
-        File file = new File(fd.getFileLocation() + fd.getFileName());
-        byte[] bytes = new byte[(int) file.length()];
-        try {
-            FileInputStream fi = new FileInputStream(file);
-            fi.read(bytes);
-            fi.close();
-        } catch(Exception e){}
-        return bytes;
     }
 
     /////
