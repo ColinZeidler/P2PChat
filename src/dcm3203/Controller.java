@@ -131,11 +131,13 @@ public class Controller {
                                 System.out.println(senderi);
                                 filei = filei.substring(filei.indexOf("\n") + 1, filei.length());
                                 FileData newReqFile = new FileData(filei);
-
+                                newReqFile = myModel.getFilesAvailable().getMyFileByName(newReqFile.getFileName());
                                 if (newReqFile.isValid()){
                                     myModel.addMessage(senderi + "File request: " + newReqFile.getFileName());
+                                    System.out.println("loading file from disk");
                                     message = newReqFile.getFileName();
-                                    message += "\n" + myModel.getFileAsBytes(newReqFile).toString();
+                                    String str = new String(myModel.getFileAsBytes(newReqFile), "UTF-8");
+                                    message += "\n" + str;
                                     Packet packet = new Packet(myModel.fileCode, message);
                                     for (User u : myModel.getUserList()) {
                                         try {
@@ -155,12 +157,10 @@ public class Controller {
                             case Model.fileCode:
                                 //save the file to disk
                                 String f = new String(data.getBytes());
-                                System.out.println(f);
                                 String fname = new String(f.substring(0,f.indexOf('\n')));
-                                String fdata = new String(f.substring(f.indexOf('\n') + 1, f.length()));
+                                byte[] fdata = f.substring(f.indexOf('\n') + 1, f.length()).getBytes("UTF-8");
                                 myModel.saveFile(fdata, fname);
                                 System.out.println("saving file to disk");
-                                System.out.println(fdata);
                                 break;
                             case Model.fileRemoveCode:
                                 String remInfo = new String(data.getBytes());
