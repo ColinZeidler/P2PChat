@@ -78,6 +78,14 @@ public class FileList {
     //
     public synchronized List<FileData> getLocalFiles() { return (myFiles); }
 
+    public synchronized FileData getMyFileByName(String name) {
+        for (FileData fdv : myFiles)
+            if (fdv.getFileName().equals(name))
+                return (fdv);
+
+        return (null);
+    }
+
     /////
     //   Gives a map containing the names of local files
     //
